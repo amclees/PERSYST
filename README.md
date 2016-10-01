@@ -7,6 +7,7 @@ It is primarily for syncing files across the local network and will provide an i
 
 <h3>How to Setup your Environment:</h3>
 <ol>
+<li>Install JDK 8</li>
 <li>Install Eclipse</li>
 <li>Download Hive2Hive version 1.2.2</li>
 <li>Clone this repository to a local folder</li>
