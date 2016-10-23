@@ -13,4 +13,5 @@ It is primarily for syncing files across the local network and will provide an i
 <li>Clone this repository to a local folder</li>
 <li>Import this project into Eclipse</li>
 <li>Specify the location of Hive2Hive in the build path of this project</li>
+<li>Specify the location of Hive2Hive's library folder in the build path of this project</li>
 </ol>
