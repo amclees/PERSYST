@@ -129,7 +129,7 @@ public class PersistentStorage {
 	 * @param bytes A byte array corresponding to an object
 	 * @return An object corresponding to the input byte array
 	 */
-	public static Object fromBytes(byte[] bytes) {
+	public static Serializable fromBytes(byte[] bytes) {
 		ByteArrayInputStream input = new ByteArrayInputStream(bytes);
 	    ObjectInputStream output = null;
 		try {
@@ -138,10 +138,12 @@ public class PersistentStorage {
 			e.printStackTrace();
 		}
 	    try {
-			return output.readObject();
+			return (Serializable) output.readObject();
 		} catch (ClassNotFoundException e) {
 			System.out.println("Not an object");
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch(ClassCastException e) {
 			e.printStackTrace();
 		}
 	    return null;
