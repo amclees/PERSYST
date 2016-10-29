@@ -15,3 +15,11 @@ It is primarily for syncing files across the local network and will provide an i
 <li>Specify the location of Hive2Hive in the build path of this project</li>
 <li>Specify the location of Hive2Hive's library folder in the build path of this project</li>
 </ol>
+
+<h3>Guidelines</h3>
+<ul>
+<li>Use only your first name, initials, or username in comments</li>
+<li>Only modify your module</li>
+<li>Push to your own branch, and don't merge outside of class</li>
+<li>If your code has an issue, create an issue in the repository and note it in the comments</li>
+</ul>
