@@ -20,6 +20,13 @@ public class FileManagerTest {
 	public static void main(String[] args) throws IOException {
 		storageTest();
 		encryptThisDirectory();
+		checksumThisFolder();
+	}
+	
+	private static void checksumThisFolder() {
+		for(File f : FileUtils.getFiles((new File("../PERSYST")))) {
+			System.out.println("File " + f.getName() + " has checksum " + FileUtils.fileChecksum(f));
+		}
 	}
 	
 	private static void encryptThisDirectory() throws IOException {
