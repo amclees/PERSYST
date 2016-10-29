@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/bcprov-jdk15on-1.51.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/config-1.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/el-api-2.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/fst-2.23.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/javassist-3.18.1-GA.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/logback-classic-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/logback-core-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/mbassador-1.2.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/netty-buffer-4.0.25.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/netty-common-4.0.25.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/netty-transport-4.0.25.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/objenesis-2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/org.hive2hive.processframework-1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/slf4j-api-1.7.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/tomp2p-core-5.0-Beta5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/tomp2p-dht-5.0-Beta5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/tomp2p-nat-5.0-Beta5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/tomp2p-replication-5.0-Beta5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/lib/weupnp-0.1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jpox/repo/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2-tests.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
