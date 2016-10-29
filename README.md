@@ -4,6 +4,7 @@ Personal Sync System Technology
 PERSYST is a peer-to-peer based system for syncing a users files across a network of systems running PERSYST.
 It is primarily for syncing files across the local network and will provide an implementation of Hive2Hive.
 
+If you need a Git program, I would recommend [TortoiseGit](https://tortoisegit.org/).
 
 <h3>How to Setup your Environment:</h3>
 <ol>
