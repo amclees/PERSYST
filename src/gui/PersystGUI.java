@@ -41,6 +41,7 @@ import javax.swing.filechooser.FileSystemView;
 public class PersystGUI extends Application {
 
     private BorderPane root;
+    private Stage pstage;
 
     private ImageView folderIcon() {
         return new ImageView(new Image(getClass().getResourceAsStream("/images/folder_icon.png")));
@@ -64,11 +65,12 @@ public class PersystGUI extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+    	this.pstage = primaryStage;
 //        StackPane root = new StackPane();
 //        root.getChildren().add(btn);
-        primaryStage.setTitle("PERSYST");
+    	this.pstage.setTitle("PERSYST");
 
-        chooseRoot(primaryStage);
+        chooseRoot(this.pstage);
 
         root = new BorderPane();
 
@@ -77,16 +79,20 @@ public class PersystGUI extends Application {
         root.setCenter(fileView(selectedFile));
 
         Scene scene = new Scene(root, 600, 250);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        this.pstage.setScene(scene);
+//        this.pstage.show();
+    }
+    
+    public Stage getStage(){
+    	return this.pstage;
     }
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        launch(args);
-    }
+//    public static void main(String[] args) {
+//        launch(args);
+//    }
 
     private void chooseRoot(Stage primaryStage) {
         //Set to user directory or go to default if cannot access

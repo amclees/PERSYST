@@ -18,20 +18,25 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class LoginGUI extends Application {
-
+	private Stage pstage;
 	@Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Log In");
+        this.pstage = primaryStage;
+        this.pstage.setTitle("Log In");
         VBox root = new VBox(20);
-        populateRoot(root, primaryStage);
+        populateRoot(root, this.pstage);
 
         Scene scene = new Scene(root, 600, 250);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        this.pstage.setScene(scene);
+//        this.pstage.show();
     }
 
-    public static void main(String[] args) {
-        launch(args);
+//    public static void main(String[] args) {
+//        launch(args);
+//    }
+	
+    public Stage getStage(){
+    	return this.pstage;
     }
     
     private void populateRoot(VBox root, Stage stage){

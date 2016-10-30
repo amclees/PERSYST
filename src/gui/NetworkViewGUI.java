@@ -7,13 +7,16 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class Test extends Application{
-
+public class NetworkViewGUI extends Application{
+	private Stage pstage;
+	private ArrayList<String> pears;
 	@Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Log In");
+        this.pstage = primaryStage;
+        this.pstage.setTitle("Log In");
         
         ArrayList<String> list = new ArrayList<>();
+        
         
         list.add("130.182.24.170");
         list.add("130.182.24.172");
@@ -21,16 +24,20 @@ public class Test extends Application{
         list.add("130.182.24.176");
         list.add("130.182.24.178");
         
-       NetworkView root = new NetworkView(list);
+        NetworkView root = new NetworkView(list);
 
         Scene scene = new Scene(root, 600, 250);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        this.pstage.setScene(scene);
+//        this.pstage.show();
+    }
+	
+	public Stage getStage(){
+    	return this.pstage;
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+//    public static void main(String[] args) {
+//        launch(args);
+//    }
 
 	
 }
