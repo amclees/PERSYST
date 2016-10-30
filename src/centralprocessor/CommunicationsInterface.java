@@ -2,14 +2,13 @@ package centralprocessor;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.hive2hive.core.api.interfaces.IFileManager;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
 import org.hive2hive.processframework.interfaces.IProcessComponent;
 
+import userprofile.UserProfile;
 import filemanager.PersistentStorage;
 
 /**
@@ -19,14 +18,22 @@ import filemanager.PersistentStorage;
  *
  */
 public class CommunicationsInterface implements ICommunicationsInterface {
-
+	
 	public CommunicationsInterface() {
 
 	}
 
 	@Override
 	public boolean login(String username, String password) {
-		// TODO Auto-generated method stub
+		File file = new File(this.getRootFolder().getAbsolutePath()
+				+ "/.persystconf");
+		PersistentStorage storage = new PersistentStorage(this.getPassword(),
+				"Default PIN");
+		byte[] config = storage.read(file);
+		PERSYSTSession.usr = new UserProfile(username, password);
+		//Config configObj = (Config)config;
+		//usr.setConfig(configObj)
+		
 		return false;
 	}
 
@@ -60,38 +67,32 @@ public class CommunicationsInterface implements ICommunicationsInterface {
 
 	@Override
 	public Serializable getConfiguration(String configuration) {
-		// TODO Auto-generated method stub
-		return null;
+		return PERSYSTSession.usr.getConfiguration(configuration);
 	}
 
 	@Override
 	public void setConfiguration(String configuration, Serializable value) {
-		// TODO Auto-generated method stub
-
+		PERSYSTSession.usr.setConfiguration(configuration, value);
 	}
 
 	@Override
 	public byte[] getConfigurationsData() {
-		// TODO Auto-generated method stub
-		return null;
+		return PERSYSTSession.usr.getConfigData();
 	}
 
 	@Override
 	public String getPassword() {
-		// TODO Auto-generated method stub
-		return null;
+		return PERSYSTSession.usr.getPassword();
 	}
 
 	@Override
 	public String getUsername() {
-		// TODO Auto-generated method stub
-		return null;
+		return PERSYSTSession.usr.getUsername();
 	}
 
 	@Override
 	public String getPIN() {
-		// TODO Auto-generated method stub
-		return null;
+		return PERSYSTSession.usr.getPIN();
 	}
 
 	@Override
