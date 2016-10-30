@@ -26,10 +26,8 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	LoadScreen lscreen;
 	LoginGUI lgui;
 	NetworkViewGUI nvgui;
-	Stage primaryStage;
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		this.primaryStage = primaryStage;
 		
 		this.cgui = new ConfigGUI();
 		this.cgui.start(new Stage());
