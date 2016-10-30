@@ -1,5 +1,6 @@
 package gui;
 
+import centralprocessor.PERSYSTSession;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -77,14 +78,13 @@ public class LoginGUI extends Application {
     	    	String password = passField.getText();
     	    	if(validateUsername(username) && validatePassword(password)){
     	    		
-    	    		if(login(username, password)){
+    	    		if(PERSYSTSession.comm.login(username, password)){
+    	    			// Have Core start close this window and start PERSYST Gui
         	            stage.close();
     	    		}
     	    		else{
     	    			passHint.setText("couldn't connect");
     	    		}
-//    	    		System.out.println("username " + username);
-//    	    		System.out.println("password " + password);
     	    	}
     	    	else{
     	    		if ( ! validateUsername(username)){
@@ -99,14 +99,7 @@ public class LoginGUI extends Application {
     	
     	root.getChildren().addAll(title, userHbox, passHbox, passHint, loginBtn);
     }
-    
-    
-    private boolean login(String username, String password){
-    	//TODO 
-    	// Pass the username and password to the correct method
-    	return false;
-    }
-    
+        
     private boolean validateUsername(String s){
     	return s.length() > 3;
     }

@@ -66,7 +66,7 @@ public class PersystGUI extends Application {
 
 //        StackPane root = new StackPane();
 //        root.getChildren().add(btn);
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("PERSYST");
 
         chooseRoot(primaryStage);
 
