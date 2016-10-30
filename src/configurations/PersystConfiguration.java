@@ -62,7 +62,7 @@ public class PersystConfiguration implements Serializable {
 		this.tryUpnp = tryUpnp;
 				
 	}
-/**	
+
 	//File Configuration
 	public static PersystConfiguration createDefault() {
 		return new PersystConfiguration(H2HConstants.DEFAULT_MAX_FILE_SIZE, H2HConstants.DEFAULT_MAX_NUM_OF_VERSIONS,
@@ -227,5 +227,5 @@ public class PersystConfiguration implements Serializable {
 	}
 	
 	
-
+*/
 }

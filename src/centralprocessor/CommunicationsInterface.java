@@ -10,6 +10,9 @@ import org.hive2hive.processframework.interfaces.IProcessComponent;
 
 import userprofile.UserProfile;
 import filemanager.PersistentStorage;
+import javafx.application.Application;
+import javafx.stage.Stage;
+import gui.*;
 
 /**
  * Implementation of communications interface
@@ -17,12 +20,40 @@ import filemanager.PersistentStorage;
  * @author Andrew
  *
  */
-public class CommunicationsInterface implements ICommunicationsInterface {
-	
-	public CommunicationsInterface() {
-
+public class CommunicationsInterface extends Application implements ICommunicationsInterface {
+	PersystGUI pgui;
+	ConfigGUI cgui;
+	LoadScreen lscreen;
+	LoginGUI lgui;
+	NetworkViewGUI nvgui;
+	Stage primaryStage;
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		this.primaryStage = primaryStage;
+		
+		this.cgui = new ConfigGUI();
+		this.cgui.start(new Stage());
+		
+		this.lscreen = new LoadScreen();
+		this.lscreen.start(new Stage());
+		
+		this.lgui = new LoginGUI();
+		this.lgui.start(new Stage());
+		
+		this.nvgui = new NetworkViewGUI();
+		this.nvgui.start(new Stage());
+		
+		this.pgui = new PersystGUI();
+		this.pgui.start(primaryStage);
+		this.pgui.getStage().show();
+		this.nvgui.getStage().show();
+		
 	}
-
+	
+	public static void main(String[] args) {
+		launch(args);
+	}
+	
 	@Override
 	public boolean login(String username, String password) {
 		File file = new File(this.getRootFolder().getAbsolutePath()
@@ -154,5 +185,6 @@ public class CommunicationsInterface implements ICommunicationsInterface {
 	public File getRootFolder() {
 		return (File) this.getConfiguration("rootfolder");
 	}
+
 
 }
