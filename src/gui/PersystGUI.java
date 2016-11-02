@@ -34,14 +34,22 @@ import javafx.stage.DirectoryChooser;
 import javafx.util.Callback;
 import javax.swing.filechooser.FileSystemView;
 
+import centralprocessor.CommunicationsInterface;
+
 /**
  *
- * @author Sahagun
+ * @author Sahagun, Jonathan Song
  */
 public class PersystGUI extends Application {
 
     private BorderPane root;
     private Stage pstage;
+    private CommunicationsInterface comint;
+
+    //takes in communicationsinterface to call functions later
+    public PersystGUI(CommunicationsInterface comint){
+    	this.comint = comint;
+    }
 
     private ImageView folderIcon() {
         return new ImageView(new Image(getClass().getResourceAsStream("/images/folder_icon.png")));

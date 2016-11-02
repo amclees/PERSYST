@@ -12,13 +12,14 @@ import configurations.PersystConfiguration;
 import userprofile.UserProfile;
 import filemanager.PersistentStorage;
 import javafx.application.Application;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import gui.*;
 
 /**
  * Implementation of communications interface
  * 
- * @author Andrew
+ * @author Andrew, Jonathan Song
  *
  */
 public class CommunicationsInterface extends Application implements ICommunicationsInterface {
@@ -29,24 +30,30 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	NetworkViewGUI nvgui;
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		
-		this.cgui = new ConfigGUI();
+		//gui setup
+		this.cgui = new ConfigGUI(this);
 		this.cgui.start(new Stage());
+//		this.cgui.getStage().setOnCloseRequest(value);
 		
-		this.lscreen = new LoadScreen();
+		this.lscreen = new LoadScreen(this);
 		this.lscreen.start(new Stage());
 		
-		this.lgui = new LoginGUI();
+		this.lgui = new LoginGUI(this);
 		this.lgui.start(new Stage());
 		
-		this.nvgui = new NetworkViewGUI();
+		this.nvgui = new NetworkViewGUI(this);
 		this.nvgui.start(new Stage());
 		
-		this.pgui = new PersystGUI();
+		this.pgui = new PersystGUI(this);
 		this.pgui.start(primaryStage);
+
+		this.nvgui.getStage().initModality(Modality.WINDOW_MODAL);
+		this.nvgui.getStage().initOwner(this.pgui.getStage());
+		
+		//show initial display after here
+		this.lscreen.getStage().show();
 		this.pgui.getStage().show();
 		this.nvgui.getStage().show();
-		
 	}
 	
 	public static void main(String[] args) {

@@ -1,5 +1,6 @@
 package gui;
 
+import centralprocessor.CommunicationsInterface;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,6 +19,13 @@ import javafx.scene.control.TextField;
 
 public class ConfigGUI extends Application {
 	private Stage pstage;
+	
+	private CommunicationsInterface comint;
+	
+    //takes in communicationsinterface to call functions later
+    public ConfigGUI(CommunicationsInterface comint){
+    	this.comint = comint;
+    }
 	@Override
     public void start(Stage primaryStage) {
 		pstage = primaryStage;
