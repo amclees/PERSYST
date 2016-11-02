@@ -1,4 +1,4 @@
-package gui;
+package userinterface;
 
 import centralprocessor.PERSYSTSession;
 import javafx.application.Application;
