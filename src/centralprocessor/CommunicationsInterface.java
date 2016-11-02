@@ -2,15 +2,18 @@ package centralprocessor;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.hive2hive.core.api.interfaces.IFileManager;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
 import org.hive2hive.processframework.interfaces.IProcessComponent;
 
+import configurations.PersystConfiguration;
+import userprofile.UserProfile;
 import filemanager.PersistentStorage;
+import javafx.application.Application;
+import javafx.stage.Stage;
+import gui.*;
 
 /**
  * Implementation of communications interface
@@ -18,19 +21,63 @@ import filemanager.PersistentStorage;
  * @author Andrew
  *
  */
-public class CommunicationsInterface implements ICommunicationsInterface {
-
-	public CommunicationsInterface() {
-
-	}
-
+public class CommunicationsInterface extends Application implements ICommunicationsInterface {
+	PersystGUI pgui;
+	ConfigGUI cgui;
+	LoadScreen lscreen;
+	LoginGUI lgui;
+	NetworkViewGUI nvgui;
 	@Override
+	public void start(Stage primaryStage) throws Exception {
+		
+		this.cgui = new ConfigGUI();
+		this.cgui.start(new Stage());
+		
+		this.lscreen = new LoadScreen();
+		this.lscreen.start(new Stage());
+		
+		this.lgui = new LoginGUI();
+		this.lgui.start(new Stage());
+		
+		this.nvgui = new NetworkViewGUI();
+		this.nvgui.start(new Stage());
+		
+		this.pgui = new PersystGUI();
+		this.pgui.start(primaryStage);
+		this.pgui.getStage().show();
+		this.nvgui.getStage().show();
+		
+	}
+	
+	public static void main(String[] args) {
+		launch(args);
+	}
+	
+	@Override
+	/**
+	 * This method initializes the User Profile object for use by other modules then signals to verify them
+	 */
 	public boolean login(String username, String password) {
-		// TODO Auto-generated method stub
-		return false;
+		File file = new File(this.getRootFolder().getAbsolutePath()
+				+ "/.persystconf");
+		if(file.exists()) {
+			PersistentStorage storage = new PersistentStorage(this.getPassword(),
+					"Default PIN");
+			byte[] config = storage.read(file);
+			if(config.length == 0) return false;
+			PersystConfiguration configObj = (PersystConfiguration)(PersistentStorage.fromBytes(config));
+			PERSYSTSession.usr = new UserProfile(username, password, configObj);
+			//Signal to verify with the network
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
+	/**
+	 * This method stores the current configurations in the file system
+	 */
 	public void saveConfigurations() {
 		PersistentStorage storage = new PersistentStorage(this.getPassword(),
 				this.getPIN());
@@ -41,6 +88,9 @@ public class CommunicationsInterface implements ICommunicationsInterface {
 	}
 
 	@Override
+	/**
+	 * This method updates the current configurations from the file system
+	 */
 	public void updateConfigurations() {
 		PersistentStorage storage = new PersistentStorage(this.getPassword(),
 				this.getPIN());
@@ -48,10 +98,14 @@ public class CommunicationsInterface implements ICommunicationsInterface {
 				.getAbsolutePath() + "/.persystconf"));
 		if (file.length == 0)
 			return;
-		// Send signal to user profile
+		PersystConfiguration configObj = (PersystConfiguration)(PersistentStorage.fromBytes(file));
+		PERSYSTSession.usr.setConfigurations(configObj);
 	}
 
 	@Override
+	/**
+	 * This method ends the program after saving the configurations
+	 */
 	public void sendShutdownSignal() {
 		this.updateConfigurations();
 		this.saveConfigurations();
@@ -60,38 +114,32 @@ public class CommunicationsInterface implements ICommunicationsInterface {
 
 	@Override
 	public Serializable getConfiguration(String configuration) {
-		// TODO Auto-generated method stub
-		return null;
+		return PERSYSTSession.usr.getConfiguration(configuration);
 	}
 
 	@Override
 	public void setConfiguration(String configuration, Serializable value) {
-		// TODO Auto-generated method stub
-
+		PERSYSTSession.usr.setConfiguration(configuration, value);
 	}
 
 	@Override
 	public byte[] getConfigurationsData() {
-		// TODO Auto-generated method stub
-		return null;
+		return PERSYSTSession.usr.getConfigData();
 	}
 
 	@Override
 	public String getPassword() {
-		// TODO Auto-generated method stub
-		return null;
+		return PERSYSTSession.usr.getPassword();
 	}
 
 	@Override
 	public String getUsername() {
-		// TODO Auto-generated method stub
-		return null;
+		return PERSYSTSession.usr.getUsername();
 	}
 
 	@Override
 	public String getPIN() {
-		// TODO Auto-generated method stub
-		return null;
+		return PERSYSTSession.usr.getPIN();
 	}
 
 	@Override
@@ -153,5 +201,6 @@ public class CommunicationsInterface implements ICommunicationsInterface {
 	public File getRootFolder() {
 		return (File) this.getConfiguration("rootfolder");
 	}
+
 
 }

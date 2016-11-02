@@ -144,7 +144,7 @@ public class PersistentStorage {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch(ClassCastException e) {
-			e.printStackTrace();
+			System.out.println("Not an object");
 		}
 	    return null;
 	}
