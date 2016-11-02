@@ -82,7 +82,9 @@ public class UserProfile {
 	 */
 	public void setConfiguration(String configuration, Serializable value) {
 		//Make change to config object
-		configMap.put(configuration, value);
+		
+		updateMap();
+		//configMap.put(configuration, value);
 	}
 	
 	/**
