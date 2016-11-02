@@ -8,6 +8,7 @@ import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
 import org.hive2hive.processframework.interfaces.IProcessComponent;
 
+import configurations.PersystConfiguration;
 import userprofile.UserProfile;
 import filemanager.PersistentStorage;
 import javafx.application.Application;
@@ -53,20 +54,30 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	}
 	
 	@Override
+	/**
+	 * This method initializes the User Profile object for use by other modules then signals to verify them
+	 */
 	public boolean login(String username, String password) {
 		File file = new File(this.getRootFolder().getAbsolutePath()
 				+ "/.persystconf");
-		PersistentStorage storage = new PersistentStorage(this.getPassword(),
-				"Default PIN");
-		byte[] config = storage.read(file);
-		PERSYSTSession.usr = new UserProfile(username, password);
-		//Config configObj = (Config)config;
-		//usr.setConfig(configObj)
-		
-		return false;
+		if(file.exists()) {
+			PersistentStorage storage = new PersistentStorage(this.getPassword(),
+					"Default PIN");
+			byte[] config = storage.read(file);
+			if(config.length == 0) return false;
+			PersystConfiguration configObj = (PersystConfiguration)(PersistentStorage.fromBytes(config));
+			PERSYSTSession.usr = new UserProfile(username, password, configObj);
+			//Signal to verify with the network
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
+	/**
+	 * This method stores the current configurations in the file system
+	 */
 	public void saveConfigurations() {
 		PersistentStorage storage = new PersistentStorage(this.getPassword(),
 				this.getPIN());
@@ -77,6 +88,9 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	}
 
 	@Override
+	/**
+	 * This method updates the current configurations from the file system
+	 */
 	public void updateConfigurations() {
 		PersistentStorage storage = new PersistentStorage(this.getPassword(),
 				this.getPIN());
@@ -84,10 +98,14 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				.getAbsolutePath() + "/.persystconf"));
 		if (file.length == 0)
 			return;
-		// Send signal to user profile
+		PersystConfiguration configObj = (PersystConfiguration)(PersistentStorage.fromBytes(file));
+		PERSYSTSession.usr.setConfigurations(configObj);
 	}
 
 	@Override
+	/**
+	 * This method ends the program after saving the configurations
+	 */
 	public void sendShutdownSignal() {
 		this.updateConfigurations();
 		this.saveConfigurations();
