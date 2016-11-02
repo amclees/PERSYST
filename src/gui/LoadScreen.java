@@ -17,7 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class LoadScreen extends Application {
+public class LoadScreen {
 		private Stage pstage;
 		
 		private CommunicationsInterface comint;
@@ -26,7 +26,7 @@ public class LoadScreen extends Application {
 	    public LoadScreen(CommunicationsInterface comint){
 	    	this.comint = comint;
 	    }
-		@Override
+//		@Override
 	    public void start(Stage primaryStage) {
 			this.pstage = primaryStage;
 			this.pstage.setTitle("Loading");

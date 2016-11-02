@@ -12,8 +12,11 @@ import configurations.PersystConfiguration;
 import userprofile.UserProfile;
 import filemanager.PersistentStorage;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import gui.*;
 
 /**
@@ -28,12 +31,18 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	LoadScreen lscreen;
 	LoginGUI lgui;
 	NetworkViewGUI nvgui;
+	ConnectGUI congui;
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		//prevent app from closing on all windows exit
+		Platform.setImplicitExit(false);
 		//gui setup
 		this.cgui = new ConfigGUI(this);
 		this.cgui.start(new Stage());
 //		this.cgui.getStage().setOnCloseRequest(value);
+		
+		this.congui = new ConnectGUI(this);
+		this.congui.start(new Stage());
 		
 		this.lscreen = new LoadScreen(this);
 		this.lscreen.start(new Stage());
@@ -46,12 +55,21 @@ public class CommunicationsInterface extends Application implements ICommunicati
 		
 		this.pgui = new PersystGUI(this);
 		this.pgui.start(primaryStage);
-
+		this.pgui.getStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent we) {
+				System.out.println("goodbye world");
+				//do stuff before exit
+				Platform.exit();
+			}
+		});      
+		
+		//locks pgui while nvgui open
 		this.nvgui.getStage().initModality(Modality.WINDOW_MODAL);
 		this.nvgui.getStage().initOwner(this.pgui.getStage());
 		
 		//show initial display after here
-		this.lscreen.getStage().show();
+		this.cgui.getStage().show();
 		this.pgui.getStage().show();
 		this.nvgui.getStage().show();
 	}
