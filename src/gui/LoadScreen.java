@@ -17,28 +17,20 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class LoadScreen extends Application {
-		private Stage pstage;
+
 		@Override
 	    public void start(Stage primaryStage) {
-			this.pstage = primaryStage;
-			this.pstage.setTitle("Log In");
+	        primaryStage.setTitle("Log In");
 	        VBox root = new VBox(20);
 
 	        Scene scene = new Scene(root, 600, 250);
-	        this.pstage.setScene(scene);
-//	        this.pstage.show();
+	        primaryStage.setScene(scene);
+	        primaryStage.show();
 	    }
-		
-	    public Stage getStage(){
-	    	return this.pstage;
+
+	    public static void main(String[] args) {
+	        launch(args);
 	    }
-	    
-	    public void setText(String text){
-	    	this.pstage.setTitle(text);
-	    }
-//	    public static void main(String[] args) {
-//	        launch(args);
-//	    }
 	    
 	    
 }
