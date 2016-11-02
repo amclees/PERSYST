@@ -1,10 +1,15 @@
 package networking;
 
 import org.hive2hive.core.api.H2HNode;
+import org.hive2hive.core.api.configs.FileConfiguration;
 import org.hive2hive.core.api.configs.NetworkConfiguration;
 import org.hive2hive.core.api.interfaces.IFileConfiguration;
 import org.hive2hive.core.api.interfaces.IH2HNode;
-import org.hive2hive.core.api.interfaces.INetworkConfiguration;
+import org.hive2hive.core.security.H2HDefaultEncryption;
+import org.hive2hive.core.serializer.IH2HSerialize;
+import org.hive2hive.core.serializer.FSTSerializer;
+
+import filemanager.FileEventListener;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -17,6 +22,12 @@ import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
+/**
+ * Implementation of communications interface
+ * 
+ * @author Andrew, Jonathan Song
+ *
+ */
 public class Connection {
 	public String localip;
 	public ArrayList<String> lanscan;
@@ -36,18 +47,38 @@ public class Connection {
 		this.scanthreads = new ArrayList<Thread>();
 		this.netconfig = nconfig;
 	}
+	
 	//store copy of NetworkConfig for use
 	public void setNetConfig(NetworkConfiguration nconfig){
 		this.netconfig = nconfig;
 	}
-	//connect via ip given return true if connection success
-	public boolean Connect(INetworkConfiguration nconfig){
-		return this.node.connect(nconfig);
+	
+	//for taskscheduler buildnode first then connect
+	public void buildNode(IFileConfiguration fileConfig) {
+		IH2HSerialize serializer = new FSTSerializer();	//default encryption
+
+		node = H2HNode.createNode(fileConfig, new H2HDefaultEncryption(serializer), serializer);
 	}
+	
+	//connect via ip given return true if connection success
+	//if initial pass in NetworkConfiguration.createInitial(nodeid) created config
+	public boolean Connect(NetworkConfiguration nconfig){
+		if (this.node.connect(nconfig)) {
+
+			// connect the event bus
+			this.node.getFileManager().subscribeFileEvents(new FileEventListener(node.getFileManager()));
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	//disconnect node
 	public boolean Disconnect(){
 		return this.node.disconnect();
 	}
+	
 	//disconnect node while keeping session
 	public boolean DisconnectKS(){
 		return this.node.disconnectKeepSession();

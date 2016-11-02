@@ -1,5 +1,6 @@
 package gui;
 
+import centralprocessor.CommunicationsInterface;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
@@ -18,10 +19,17 @@ import javafx.scene.control.TextField;
 
 public class LoadScreen extends Application {
 		private Stage pstage;
+		
+		private CommunicationsInterface comint;
+
+	    //takes in communicationsinterface to call functions later
+	    public LoadScreen(CommunicationsInterface comint){
+	    	this.comint = comint;
+	    }
 		@Override
 	    public void start(Stage primaryStage) {
 			this.pstage = primaryStage;
-			this.pstage.setTitle("Log In");
+			this.pstage.setTitle("Loading");
 	        VBox root = new VBox(20);
 
 	        Scene scene = new Scene(root, 600, 250);

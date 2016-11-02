@@ -1,5 +1,6 @@
 package gui;
 
+import centralprocessor.CommunicationsInterface;
 import centralprocessor.PERSYSTSession;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -19,6 +20,13 @@ import javafx.scene.control.TextField;
 
 public class LoginGUI extends Application {
 	private Stage pstage;
+	
+	private CommunicationsInterface comint;
+
+    //takes in communicationsinterface to call functions later
+    public LoginGUI(CommunicationsInterface comint){
+    	this.comint = comint;
+    }
 	@Override
     public void start(Stage primaryStage) {
         this.pstage = primaryStage;
