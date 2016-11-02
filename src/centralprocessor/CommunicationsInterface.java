@@ -13,7 +13,7 @@ import userprofile.UserProfile;
 import filemanager.PersistentStorage;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import gui.*;
+import userinterface.*;
 
 /**
  * Implementation of communications interface
