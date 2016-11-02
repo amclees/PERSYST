@@ -8,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class NetworkViewGUI extends Application{
+public class NetworkViewGUI {
 	private Stage pstage;
 	private ArrayList<String> pears;
 	
@@ -18,7 +18,7 @@ public class NetworkViewGUI extends Application{
     public NetworkViewGUI(CommunicationsInterface comint){
     	this.comint = comint;
     }
-	@Override
+//	@Override
     public void start(Stage primaryStage) {
         this.pstage = primaryStage;
         this.pstage.setTitle("Available LAN PERSYST");
@@ -36,16 +36,11 @@ public class NetworkViewGUI extends Application{
 
         Scene scene = new Scene(root, 600, 250);
         this.pstage.setScene(scene);
-//        this.pstage.show();
     }
 	
 	public Stage getStage(){
     	return this.pstage;
     }
-
-//    public static void main(String[] args) {
-//        launch(args);
-//    }
 
 	
 }

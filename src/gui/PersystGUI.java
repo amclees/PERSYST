@@ -40,7 +40,7 @@ import centralprocessor.CommunicationsInterface;
  *
  * @author Sahagun, Jonathan Song
  */
-public class PersystGUI extends Application {
+public class PersystGUI {
 
     private BorderPane root;
     private Stage pstage;
@@ -70,7 +70,7 @@ public class PersystGUI extends Application {
 //    private final File target_dir = new File("C:\\Users\\Jpox\\Desktop\\Delete Me\\");
     private File target_dir = FileSystemView.getFileSystemView().getDefaultDirectory();
 
-    @Override
+//    @Override
     public void start(Stage primaryStage) {
 
     	this.pstage = primaryStage;

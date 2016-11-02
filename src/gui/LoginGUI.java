@@ -18,7 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class LoginGUI extends Application {
+public class LoginGUI {
 	private Stage pstage;
 	
 	private CommunicationsInterface comint;
@@ -27,7 +27,7 @@ public class LoginGUI extends Application {
     public LoginGUI(CommunicationsInterface comint){
     	this.comint = comint;
     }
-	@Override
+//	@Override
     public void start(Stage primaryStage) {
         this.pstage = primaryStage;
         this.pstage.setTitle("Log In");
@@ -36,12 +36,7 @@ public class LoginGUI extends Application {
 
         Scene scene = new Scene(root, 600, 250);
         this.pstage.setScene(scene);
-//        this.pstage.show();
     }
-
-//    public static void main(String[] args) {
-//        launch(args);
-//    }
 	
     public Stage getStage(){
     	return this.pstage;
