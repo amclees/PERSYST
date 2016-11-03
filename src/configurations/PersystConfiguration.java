@@ -9,22 +9,31 @@ import java.util.Enumeration;
 import java.util.UUID;
 
 import org.hive2hive.core.H2HConstants;
+import org.hive2hive.core.api.configs.FileConfiguration;
+import org.hive2hive.core.api.configs.NetworkConfiguration;
+import org.hive2hive.core.api.interfaces.PersystConfiguration;
+
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
+
 import net.tomp2p.p2p.Peer;
+
+
 
 public class PersystConfiguration implements Serializable {
 	
 		
+	
+	//Networking Configuration
 	private static final int AUTO_PORT = -1;
 
-	//Networking Configuration
-	public String nodeID = UUID.randomUUID().toString();
-	public int port = AUTO_PORT;
-	public InetAddress bootstrapAddress = null;
-	public boolean isLocal = false;
-	public Peer bootstrapPeer = null;
-	public int bootstrapPort = H2HConstants.H2H_PORT;
-	public boolean isFirewalled = false;
-	public boolean tryUpnp = false;
+	private String nodeID = UUID.randomUUID().toString();
+	private int port = AUTO_PORT;
+	private InetAddress bootstrapAddress = null;
+	private boolean isLocal = false;
+	private Peer bootstrapPeer = null;
+	private int bootstrapPort = H2HConstants.H2H_PORT;
+	private boolean isFirewalled = false;
+	private boolean tryUpnp = false;
     //End	
 	
 	
@@ -62,7 +71,7 @@ public class PersystConfiguration implements Serializable {
 		this.tryUpnp = tryUpnp;
 				
 	}
-/**	
+
 	//File Configuration
 	public static PersystConfiguration createDefault() {
 		return new PersystConfiguration(H2HConstants.DEFAULT_MAX_FILE_SIZE, H2HConstants.DEFAULT_MAX_NUM_OF_VERSIONS,
@@ -75,28 +84,85 @@ public class PersystConfiguration implements Serializable {
 	}
 	//End
 	
-/**
+
 	//NetworkConfiguration
-	public NetworkConfiguration setBootstrap(InetAddress bootstrapAddress, int h2hPort) {
-		return setBootstrap(bootstrapAddress, H2HConstants.H2H_PORT);
-	}
-	
-	public static NetworkConfiguration createInitial() {
+	/**
+	 * Create network configuration for initial peer with random node id
+	 * 
+	 * @return the network configuration
+	 */
+	public static PersystConfiguration createInitial() {
 		return createInitial(UUID.randomUUID().toString());
 	}
-	
+
+	/**
+	 * Create network configuration for initial peer with given node id.
+	 * 
+	 * @param nodeID defines the location of the peer in the DHT
+	 * @return the network configuration
+	 */
 	public static NetworkConfiguration createInitial(String nodeID) {
 		return new NetworkConfiguration().setNodeId(nodeID).setPort(AUTO_PORT);
 	}
-	
-	public static NetworkConfiguration create(String string, InetAddress bootstrapAddress) {
+
+	/**
+	 * Create network configuration for 'normal' peer with random node id. The bootstrapping happens at the
+	 * default port {@link H2HConstants#H2H_PORT}.
+	 * 
+	 * @param bootstrapAddress the address to bootstrap to. This can be address of the initial peer or any
+	 *            other peer connected to the DHT.
+	 * @return the network configuration
+	 */
+	public static NetworkConfiguration create(InetAddress bootstrapAddress) {
 		return create(UUID.randomUUID().toString(), bootstrapAddress);
 	}
-	
+
+	/**
+	 * Create network configuration for 'normal' peer. The bootstrapping happens at the default port
+	 * {@link H2HConstants#H2H_PORT}.
+	 * 
+	 * @param nodeID defines the location of the peer in the DHT. Should not be null
+	 * @param bootstrapAddress the address to bootstrap to. This can be address of the initial peer or any
+	 *            other peer connected to the DHT.
+	 * @return the network configuration
+	 */
+	public static NetworkConfiguration create(String nodeID, InetAddress bootstrapAddress) {
+		return new NetworkConfiguration().setNodeId(nodeID).setPort(AUTO_PORT)
+				.setBootstrap(bootstrapAddress, H2HConstants.H2H_PORT);
+	}
+
+	/**
+	 * Create network configuration for 'normal' peer. The bootstrapping happens to the specified address and
+	 * port
+	 * 
+	 * @param nodeID defines the location of the peer in the DHT. Should not be null
+	 * @param bootstrapAddress the address to bootstrap to. This can be address of the initial peer or any
+	 *            other peer connected to the DHT.
+	 * @param bootstrapPort the port to bootstrap
+	 * @return the network configuration
+	 */
+	public static NetworkConfiguration create(String nodeID, InetAddress bootstrapAddress, int bootstrapPort) {
+		return new NetworkConfiguration().setNodeId(nodeID).setPort(AUTO_PORT).setBootstrap(bootstrapAddress, bootstrapPort);
+	}
+
+	/**
+	 * Creates a local peer that is only able to bootstrap to a peer running on the same host.
+	 * 
+	 * @param nodeID the id of the peer to create
+	 * @param initialPeer the peer to bootstrap to
+	 * @return the network configuration for local peers
+	 */
 	public static NetworkConfiguration createLocalPeer(String nodeID, Peer initialPeer) {
 		return new NetworkConfiguration().setNodeId(nodeID).setPort(AUTO_PORT).setBootstrapLocal(initialPeer);
 	}
-	
+
+	/**
+	 * Create a local initial peer. Regard that bootstrapping may only work for peers running on the same
+	 * host.
+	 * 
+	 * @param nodeID the id of the initial peer
+	 * @return the network configuration for local peers (initial)
+	 */
 	public static NetworkConfiguration createInitialLocalPeer(String nodeID) {
 		return new NetworkConfiguration().setNodeId(nodeID).setPort(AUTO_PORT).setLocal();
 	}
@@ -118,7 +184,7 @@ public class PersystConfiguration implements Serializable {
         }
         out.printf("\n");
 	
-	
+    }
 	
 
 	//Getters and Setters
