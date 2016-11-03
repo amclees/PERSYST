@@ -15,11 +15,8 @@ public class Test extends Application{
         
         ArrayList<String> list = new ArrayList<>();
         
-        list.add("130.182.24.170");
-        list.add("130.182.24.172");
-        list.add("130.182.24.174");
-        list.add("130.182.24.176");
-        list.add("130.182.24.178");
+        list.add("130.182.24.95");
+        list.add("8.8.8.8");
         
        NetworkView root = new NetworkView(list);
 

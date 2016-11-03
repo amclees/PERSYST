@@ -1,5 +1,7 @@
 package gui;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -21,7 +23,6 @@ import javafx.scene.text.Text;
 public class NetworkView extends VBox {
 
 	public NetworkView(ArrayList<String> ipList){
-		
 		Label titleLabel = new Label("Network");
 		titleLabel.setFont(new Font(20));
 		
@@ -52,28 +53,27 @@ public class NetworkView extends VBox {
 	
 	private void addComputer(String ipAddress){
 
-		Label label = new Label(ipAddress, new ImageView(new Image(getClass().getResourceAsStream("/images/computer_icon.png"))));
+        InetAddress ip;
+        String hostname;
+        try {
+            ip = InetAddress.getByName(ipAddress);
+            hostname = ip.getHostName();
+ 
+        } catch (UnknownHostException e) {
+        	hostname = ipAddress;
+        }
+
+		Label label = new Label(hostname, new ImageView(new Image(getClass().getResourceAsStream("/images/computer_icon.png"))));
 		Button btn = new Button("Connect");
 		
 		btn.setOnAction(event -> {
-        	System.out.println("Connect to " + label.getText());
+			// TODO connect to other Instance
+        	System.out.println("Connect to " + ipAddress);
         });
 
 		HBox box = new HBox(20);
 
 		box.getChildren().addAll(label, btn);
-		
-//		HBox box = new HBox(20);
-//		box.setAlignment(Pos.BOTTOM_LEFT);
-//		
-//		box.getChildren().add(new ImageView(new Image(getClass().getResourceAsStream("/images/computer_icon.png"))));
-//		
-//		Text text = new Text(ipAddress);
-//		box.getChildren().add(text);
-//		text.setFont(new Font(14));
-		
-//		label.setContextMenu(new LabelContextMenu(label));
-//		label.setOnMouseClicked(value);
 		
 		this.getChildren().add(box);
 	}
@@ -83,12 +83,8 @@ public class NetworkView extends VBox {
 
             MenuItem item = new MenuItem("Connect");
             item.setOnAction(event -> {
-            	
             	// TODO
             	// Connect to the ip address
-            	
-            	
-            	
             	System.out.println("Connect to " + label.getText());
                 event.consume();
             });
@@ -96,5 +92,3 @@ public class NetworkView extends VBox {
         }
     }	
 }
-
-

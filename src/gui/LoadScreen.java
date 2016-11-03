@@ -1,5 +1,6 @@
 package gui;
 
+import centralprocessor.CommunicationsInterface;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
@@ -13,24 +14,52 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 
-public class LoadScreen extends Application {
+public class LoadScreen {
+		private Stage pstage;
+		private CommunicationsInterface comint;
+		private Label loadingLabel = new Label("Hello World");
 
-		@Override
+	    //takes in communicationsinterface to call functions later
+	    public LoadScreen(CommunicationsInterface comint){
+	    	this.comint = comint;
+	    }
+
 	    public void start(Stage primaryStage) {
-	        primaryStage.setTitle("Log In");
+			this.pstage = primaryStage;
+			this.pstage.setTitle("Loading");
 	        VBox root = new VBox(20);
 
-	        Scene scene = new Scene(root, 600, 250);
-	        primaryStage.setScene(scene);
-	        primaryStage.show();
-	    }
+			root.setAlignment(Pos.CENTER);
 
-	    public static void main(String[] args) {
-	        launch(args);
+			loadingLabel.setFont(new Font(24));
+
+			ProgressIndicator progress = new ProgressIndicator(-1.0);
+
+			progress.setMinHeight(200);
+			progress.setMinWidth(200);
+
+			root.getChildren().addAll(progress, loadingLabel);
+
+			Scene scene = new Scene(root, 600, 400);
+
+	        this.pstage.setScene(scene);
+//	        this.pstage.show();
+	    }
+		
+	    public Stage getStage(){
+	    	return this.pstage;
 	    }
 	    
+	    public void setTitle(String text){
+	    	this.pstage.setTitle(text);
+	    }
 	    
+		public void setLabelText(String text) {
+			loadingLabel.setText(text);
+		}
 }
