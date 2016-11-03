@@ -1,6 +1,8 @@
 package centralprocessor;
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hive2hive.core.api.interfaces.IFileManager;
 import org.hive2hive.processframework.interfaces.IProcessComponent;
@@ -106,4 +108,12 @@ public interface ICommunicationsInterface {
 	 */
 	public File getRootFolder();
 
+
+	/**
+	 * These method returns A list of ip address as strings 
+	 * of other instances of PERSYST
+	 * 
+	 * @return A list of ip address as strings
+	 */
+	public ArrayList<String> getPERSYSTIntsances();
 }

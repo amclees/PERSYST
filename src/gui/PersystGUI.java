@@ -8,12 +8,17 @@ package gui;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -26,6 +31,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -35,111 +41,197 @@ import javafx.util.Callback;
 import javax.swing.filechooser.FileSystemView;
 
 import centralprocessor.CommunicationsInterface;
+import centralprocessor.PERSYSTSession;
 
 /**
  *
- * @author Sahagun, Jonathan Song
+ * @author Jonathan Sahagun, Jonathan Song
  */
 public class PersystGUI {
 
     private BorderPane root;
     private Stage pstage;
     private CommunicationsInterface comint;
+    private File selectedFile;	// selectedFile lets the center view know what file is selected
 
+    private HBox fileView;
+    
     //takes in communicationsinterface to call functions later
     public PersystGUI(CommunicationsInterface comint){
     	this.comint = comint;
+    	selectedFile = comint.getRootFolder();
     }
 
-    private ImageView folderIcon() {
-        return new ImageView(new Image(getClass().getResourceAsStream("/images/folder_icon.png")));
-    }
-
-    private ImageView fileIcon() {
-        return new ImageView(new Image(getClass().getResourceAsStream("/images/file_icon.png")));
-    }
-
-    private ImageView folderLarge() {
-        return new ImageView(new Image(getClass().getResourceAsStream("/images/folder.png")));
-    }
-
-    private ImageView fileLarge() {
-        return new ImageView(new Image(getClass().getResourceAsStream("/images/file.png")));
-    }
-
-//    private final File target_dir = new File("C:\\Users\\Jpox\\Desktop\\Delete Me\\");
-    private File target_dir = FileSystemView.getFileSystemView().getDefaultDirectory();
-
-//    @Override
     public void start(Stage primaryStage) {
-
     	this.pstage = primaryStage;
-//        StackPane root = new StackPane();
-//        root.getChildren().add(btn);
     	this.pstage.setTitle("PERSYST");
 
-        chooseRoot(this.pstage);
-
+    	
+    	fileView = createFileView(selectedFile);
         root = new BorderPane();
-
-        root.setLeft(treeDirectory());
+        
+        root.setLeft(createLeft());
         root.setTop(createTopMenu());
-        root.setCenter(fileView(selectedFile));
+        root.setCenter(createRight());
 
-        Scene scene = new Scene(root, 600, 250);
+        Scene scene = new Scene(root, 800, 600);
         this.pstage.setScene(scene);
-//        this.pstage.show();
     }
     
     public Stage getStage(){
     	return this.pstage;
     }
+    
+	/**
+	 * An SplitPane holding the tree directory and the current network
+	 * 
+	 * @return A SplitPane for the left panel of the GUI
+	 */
+    private SplitPane createLeft(){
+        SplitPane splitPane = new SplitPane();
+        splitPane.setPrefWidth(400);
+        splitPane.setOrientation(Orientation.VERTICAL);
+        splitPane.getItems().add(treeDirectory());    	
 
-    /**
-     * @param args the command line arguments
-     */
-//    public static void main(String[] args) {
-//        launch(args);
-//    }
 
-    private void chooseRoot(Stage primaryStage) {
-        //Set to user directory or go to default if cannot access
-        String userDirectoryString = System.getProperty("user.home");
-        File userDirectory = new File(userDirectoryString);
-        if (!userDirectory.canRead()) {
-            userDirectory = new File("C:/");
-        }
+        // TODO Get ip addresses
+        //PERSYSTSession.usr.getConfiguration("ipaddress");
+		ArrayList<String> iplist = new ArrayList<>();
+		iplist.add("8.8.8.8");
+        try {
+        	iplist.add(InetAddress.getLocalHost().getHostAddress());
+ 
+        } catch (UnknownHostException e) {}
 
-        DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle("Choose Root Folder");
-        dirChooser.setInitialDirectory(userDirectory);
-        File selectedFile = dirChooser.showDialog(primaryStage);
-        target_dir = selectedFile;
-        this.selectedFile = selectedFile;
-
-//                FileChooser fileChooser = new FileChooser();
-//                fileChooser.setTitle("Open Resource File");
-//                fileChooser.getExtensionFilters().addAll(
-//                new ExtensionFilter("Text Files", "*.txt"),
-//                new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"),
-//                new ExtensionFilter("Audio Files", "*.wav", "*.mp3", "*.aac"),
-//                new ExtensionFilter("All Files", "*.*"));
-        //File selectedFile = fileChooser.showOpenDialog(primaryStage);
+        splitPane.getItems().add(new NetworkView(iplist));
+        return splitPane;
     }
 
-    private File selectedFile = null;
+	/**
+	 * An SplitPane holding the info on the file selected and the current downloads
+	 * 
+	 * @return A SplitPane for the left panel of the GUI
+	 */
+    private SplitPane createRight(){
+        SplitPane splitPane = new SplitPane();
+        splitPane.setOrientation(Orientation.VERTICAL);
+        splitPane.getItems().add(fileView);    	
+        splitPane.getItems().add(new DownloadView(comint));
+        
+        return splitPane;
+    }
 
     public MenuBar createTopMenu() {
-        Menu menu1 = new Menu("File");
-        Menu menu2 = new Menu("Options");
-        Menu menu3 = new Menu("Help");
+        Menu fileMenu = new Menu("File");
+
+        MenuItem ExitMenuItem = new MenuItem("Exit");
+        fileMenu.getItems().add(ExitMenuItem);
+        ExitMenuItem.setOnAction((event) -> {
+        	this.pstage.close();
+        });     
+
+        
+        Menu options = new Menu("Options");
+        
+        MenuItem rootMenuItem = new MenuItem("Choose Root Folder...");
+        options.getItems().add(rootMenuItem);
+        rootMenuItem.setOnAction((event) -> {
+            ChooseRootFolder dialog = new ChooseRootFolder(comint);
+            dialog.start(new Stage());
+            updateGui();
+        });     
+        
+        MenuItem refreshMenuItem = new MenuItem("Refresh");
+        options.getItems().add(refreshMenuItem);
+        refreshMenuItem.setOnAction((event) -> {
+            updateGui();
+        });     
+        
+        MenuItem configMenuItem = new MenuItem("Configurations...");
+        options.getItems().add(configMenuItem);
+        configMenuItem.setOnAction((event) -> {
+            ConfigGUI dialog = new ConfigGUI(comint);
+            dialog.start(new Stage());
+            dialog.getStage().show();
+            updateGui();
+        });     
+        
+        
+        Menu help = new Menu("Help");
+        help.getItems().add(new MenuItem("Sorry"));
 
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(menu1, menu2, menu3);
+        menuBar.getMenus().addAll(fileMenu, options, help);
         return menuBar;
     }
 
-    public HBox fileView(File file) {
+        
+	/**
+	 * Recreates the file directory tree and the file view
+	 * 
+	 */
+    private void updateGui() {
+    	selectedFile = comint.getRootFolder();
+    	updateFileView();
+    	updateTreeDirectory();
+    	updateNetWorkView();
+    }
+    
+	/**
+	 * Recreates the file directory tree
+	 * 
+	 */
+    private void updateTreeDirectory() {
+    	SplitPane splitPane = (SplitPane) root.getLeft();
+    	splitPane.getItems().remove(0);
+    	splitPane.getItems().add(0, treeDirectory());
+    }
+    
+	/**
+	 * Recreates the file directory tree and the file view
+	 * 
+	 */
+    private void updateNetWorkView() {
+    	SplitPane splitPane = (SplitPane) root.getLeft();
+    	NetworkView networkView = (NetworkView)splitPane.getItems().get(1);
+    	
+    	
+    	
+    	// TODO Get the iplist
+
+        
+        ArrayList<String> iplist = new ArrayList<>();
+		iplist.add("8.8.8.8");
+        try {
+        	iplist.add(InetAddress.getLocalHost().getHostAddress());
+ 
+        } catch (UnknownHostException e) {
+        
+        }
+
+		networkView.refresh(iplist);
+    }
+    
+	/**
+	 * Updates the file view on the top left when this is called with the currently selected file
+	 * 
+	 */    
+    void updateFileView(){
+    	SplitPane splitPane = (SplitPane) root.getCenter();
+    	splitPane.getItems().remove(0);
+    	splitPane.getItems().add(0, createFileView(selectedFile));
+    }
+
+    
+        
+	/**
+	 * An hbox that displaces information about the selected file
+	 * 
+	 * @param File
+	 *            The file should be the root folder
+	 * @return A HBox with info about the selected file
+	 */
+    public HBox createFileView(File file) {
         HBox hbox = new HBox();
         if (file.isDirectory()) {
             hbox.getChildren().add(folderLarge());
@@ -172,7 +264,6 @@ public class PersystGUI {
         try {
             BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
 
-//            vbox.getChildren().add(vbox);
             Text name = new Text("Name: " + path.getFileName());
             Text creationTime = new Text("creationTime: " + attr.creationTime());
             Text lastAccessTime = new Text("lastAccessTime: " + attr.lastAccessTime());
@@ -214,12 +305,52 @@ public class PersystGUI {
 
         return hbox;
     }
+   
+	/**
+	 * Creates a image and puts that into an ImageView for the folder icon
+	 * 
+	 * @return A ImageView for the folder icon
+	 */
+    private ImageView folderIcon() {
+        return new ImageView(new Image(getClass().getResourceAsStream("/images/folder_icon.png")));
+    }
 
-    private TreeView treeDirectory() {
-        Pair p = new Pair(target_dir.getName(), target_dir.getPath());
+	/**
+	 * Creates a image and puts that into an ImageView for the file icon
+	 * 
+	 * @return A ImageView for the file icon
+	 */
+    private ImageView fileIcon() {
+        return new ImageView(new Image(getClass().getResourceAsStream("/images/file_icon.png")));
+    }
+    
+	/**
+	 * Creates a image and puts that into an ImageView for the folder image
+	 * 
+	 * @return A ImageView for the folder image
+	 */
+    private ImageView folderLarge() {
+        return new ImageView(new Image(getClass().getResourceAsStream("/images/folder.png")));
+    }
 
-        TreeItem<Pair> rootTreeItem = new TreeItem<>(new Pair(target_dir.getName(), target_dir.getPath()), folderIcon());
-        makeBranches(rootTreeItem, target_dir);
+	/**
+	 * Creates a image and puts that into an ImageView for the file image
+	 * 
+	 * @return A ImageView for the file image
+	 */
+    private ImageView fileLarge() {
+        return new ImageView(new Image(getClass().getResourceAsStream("/images/file.png")));
+    }
+    
+	/**
+	 * Creates and populates a TreeView that shows the file structure of the root folder
+	 * 
+	 * @return A TreeView with the file structure of the root folder
+	 */
+    private TreeView<Pair> treeDirectory() {
+        Pair p = new Pair(comint.getRootFolder().getName(), comint.getRootFolder().getPath());
+        TreeItem<Pair> rootTreeItem = new TreeItem<>(p, folderIcon());
+        makeBranches(rootTreeItem, comint.getRootFolder());
 
         rootTreeItem.setExpanded(true);
 
@@ -228,35 +359,8 @@ public class PersystGUI {
         treeView.getSelectionModel().selectedItemProperty().addListener(
                 ((v, oldValue, newValue) -> {
                     if (newValue != null) {
-//                        Path f = new File(newValue.getValue().y).toPath();
                         selectedFile = new File(newValue.getValue().y);
-                        root.setCenter(fileView(selectedFile));
-//                        try {
-//                            BasicFileAttributes attr = Files.readAttributes(f, BasicFileAttributes.class);
-//
-//                            System.out.println("creationTime: " + attr.creationTime());
-//                            System.out.println("lastAccessTime: " + attr.lastAccessTime());
-//                            System.out.println("lastModifiedTime: " + attr.lastModifiedTime());
-//
-//                            System.out.println("isDirectory: " + attr.isDirectory());
-//                            System.out.println("isOther: " + attr.isOther());
-//                            System.out.println("isRegularFile: " + attr.isRegularFile());
-//                            System.out.println("isSymbolicLink: " + attr.isSymbolicLink());
-//
-//                            // MB
-//                            double sizeMB = Math.round(attr.size() / 1024.0 / 1024.0 * 100) / 100.0;
-//                            // KB
-//                            double sizeKB = Math.round(attr.size() / 1024.0 * 100) / 100.0;
-//
-//                            if (sizeMB > 1.0) {
-//                                System.out.println("size: " + sizeMB + "MB");
-//                            } else {
-//                                System.out.println("size: " + sizeKB + "KB");
-//                            }
-//                        } catch (IOException e) {
-//
-//                        }
-//                        System.out.println(newValue.getValue().y);
+                        updateFileView();
                     }
                 }));
 
@@ -271,6 +375,15 @@ public class PersystGUI {
         return treeView;
     }
 
+	/**
+	 * A recursive helper function to go though a file structure and populate TreeItems
+	 * 
+	 * @param TreeItem
+	 * 				The parent TreeItem that will be populated
+	 * @param File
+	 * 				The location of that file that will populate the TreeItem
+	 * @return A TreeView with the file structure of the root folder
+	 */    
     void makeBranches(TreeItem<Pair> parent, File source) {
         if (source.isDirectory()) {
             for (String s : source.list()) {
@@ -290,7 +403,6 @@ public class PersystGUI {
     }
 
     private class Pair {
-
         private String x, y;
 
         public Pair(String x, String y) {
@@ -319,7 +431,7 @@ public class PersystGUI {
             return x;
         }
     }
-
+    
     private final class ContextMenuTreeCell extends TreeCell<Pair> {
 
         private ContextMenu openMenu = new ContextMenu();
