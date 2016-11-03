@@ -108,12 +108,4 @@ public interface ICommunicationsInterface {
 	 */
 	public File getRootFolder();
 
-
-	/**
-	 * These method returns A list of ip address as strings 
-	 * of other instances of PERSYST
-	 * 
-	 * @return A list of ip address as strings
-	 */
-	public ArrayList<String> getPERSYSTIntsances();
 }
