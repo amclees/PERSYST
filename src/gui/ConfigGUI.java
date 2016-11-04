@@ -1,5 +1,7 @@
 package gui;
 
+import org.hive2hive.core.H2HConstants;
+
 import centralprocessor.CommunicationsInterface;
 import centralprocessor.PERSYSTSession;
 import javafx.beans.value.ChangeListener;
@@ -50,12 +52,13 @@ public class ConfigGUI {
 
 		// Root folder
 		HBox rootBox = new HBox();
-		Label rootLabel = new Label("RootFolder: " + comint.getRootFolder().toString());
+		Label rootLabel = new Label("Root Folder: " + comint.getRootFolder().getAbsolutePath() + " ");
 		Button rootBtn = new Button("Choose Root Folder");
 		rootBtn.setOnAction((event) -> {
 			dialog = new ChooseRootFolder(comint);
 			dialog.start(new Stage());
-			rootLabel.setText("RootFolder: " + comint.getRootFolder().toString());
+			rootLabel.setText("Root Folder has been changed");
+			
 		});
 
 		rootBox.getChildren().addAll(rootLabel, spacer, rootBtn);
@@ -65,7 +68,8 @@ public class ConfigGUI {
 		HBox portBox = new HBox();
 		Label portLable = new Label("Port: ");
 		TextField portField = new TextField();
-		portField.setPromptText("The current port goes here");
+		portField.setPromptText(H2HConstants.H2H_PORT + "");
+		portField.setDisable(true);
 		
 		// Uncomment once PERSYSTSession.usr.getConfiguration() works
 		// Check the cast
@@ -80,7 +84,7 @@ public class ConfigGUI {
 		HBox maxSizeBox = new HBox();
 		Label maxSizeLabel = new Label("Max file size: ");
 		TextField maxSizeField = new TextField();
-		maxSizeField.setPromptText("The current size goes here");
+		maxSizeField.setPromptText(PERSYSTSession.config.getFileConfig().getMaxFileSize() + "");
 
 		// Uncomment once PERSYSTSession.usr.getConfiguration() works
 		// Check the cast
@@ -92,6 +96,7 @@ public class ConfigGUI {
 				// TODO this block is causing exceptions when a letter is put first
 				if (newValue.matches("\\d*")) {
 					int value = Integer.parseInt(newValue);
+					//PERSYSTSession.comm.setConfiguration("maxfilesize", value);
 				} else {
 					maxSizeField.setText(oldValue);
 				}

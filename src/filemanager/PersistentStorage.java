@@ -93,7 +93,7 @@ public class PersistentStorage {
 	public byte[] read(File file) {
 		
 		byte[] fileBytes = readPlainFile(file);
-			
+		if(fileBytes.length == 0) return fileBytes;
 		int initVectorLengthRead = ByteBuffer.wrap(Arrays.copyOfRange(fileBytes, 0, 4)).getInt();
 		byte[] initVectorRead = Arrays.copyOfRange(fileBytes, 4, 4 + initVectorLengthRead);
 		byte[] encryptedRead = Arrays.copyOfRange(fileBytes, 4 + initVectorLengthRead, fileBytes.length);
@@ -129,7 +129,7 @@ public class PersistentStorage {
 	 * @param bytes A byte array corresponding to an object
 	 * @return An object corresponding to the input byte array
 	 */
-	public static Serializable fromBytes(byte[] bytes) {
+	public static Object fromBytes(byte[] bytes) {
 		ByteArrayInputStream input = new ByteArrayInputStream(bytes);
 	    ObjectInputStream output = null;
 		try {
@@ -138,7 +138,7 @@ public class PersistentStorage {
 			e.printStackTrace();
 		}
 	    try {
-			return (Serializable) output.readObject();
+			return output.readObject();
 		} catch (ClassNotFoundException e) {
 			System.out.println("Not an object");
 		} catch (IOException e) {
@@ -157,11 +157,12 @@ public class PersistentStorage {
 	 */
 	protected static byte[] readPlainFile(File file) {
 		try {
-			InputStream in = new BufferedInputStream(new FileInputStream(file));
-			return IOUtils.toByteArray(in);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+	
+				InputStream in = new BufferedInputStream(new FileInputStream(file));
+				return IOUtils.toByteArray(in);
+			
+		} catch(Exception e) {
+			return new byte[0];
 		}
 	}
 	

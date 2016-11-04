@@ -76,7 +76,7 @@ public interface ICommunicationsInterface {
 	 *            The byte array containing the object
 	 * @return The object from the data. Null if the data is not a valid object.
 	 */
-	public Serializable fromBytes(byte[] data);
+	public Object fromBytes(byte[] data);
 
 	/**
 	 * These method creates a byte array from an object.
