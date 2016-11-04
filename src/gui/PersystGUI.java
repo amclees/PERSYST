@@ -264,6 +264,7 @@ public class PersystGUI {
 	 * @return A HBox with info about the selected file
 	 */
     public HBox createFileView(File file) {
+    	if(file == null) file = new File(System.getProperty("user.home") + "/Desktop");
         HBox hbox = new HBox();
         if (file.isDirectory()) {
             hbox.getChildren().add(folderLarge());
