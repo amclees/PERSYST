@@ -30,34 +30,30 @@ import java.net.UnknownHostException;
  */
 public class Connection {
 	public String localip;
-	public ArrayList<String> lanscan;
+	private ArrayList<String> lanscan;
 	public int threadsfinished;
 	public IH2HNode node;
 	
 	private Object mon;
 	private ArrayList<Thread> scanthreads;
-	private NetworkConfiguration netconfig;
 	
-	public Connection(IFileConfiguration fConfig, NetworkConfiguration nconfig){
+	public Connection(IFileConfiguration fConfig){
 		this.node = H2HNode.createNode(fConfig);
 		this.localip = "";
 		this.lanscan = new ArrayList<String>();
 		this.threadsfinished = 0;
 		this.mon = new Object();
 		this.scanthreads = new ArrayList<Thread>();
-		this.netconfig = nconfig;
 	}
 	
 	//store copy of NetworkConfig for use
-	public void setNetConfig(NetworkConfiguration nconfig){
-		this.netconfig = nconfig;
-	}
+//	public void setNetConfig(NetworkConfiguration nconfig){
+//		this.netconfig = nconfig;
+//	}
 	
 	//for taskscheduler buildnode first then connect
 	public void buildNode(IFileConfiguration fileConfig) {
-		IH2HSerialize serializer = new FSTSerializer();	//default encryption
-
-		node = H2HNode.createNode(fileConfig, new H2HDefaultEncryption(serializer), serializer);
+		this.node = H2HNode.createNode(fileConfig);
 	}
 	
 	//connect via ip given return true if connection success
@@ -74,6 +70,9 @@ public class Connection {
 		}
 	}
 	
+	public IH2HNode getNode(){
+		return this.node;
+	}
 	//disconnect node
 	public boolean Disconnect(){
 		return this.node.disconnect();
@@ -85,7 +84,7 @@ public class Connection {
 	}
 	
 	//returns first LP peer it finds, requires network config with connection settings except ip
-	public ArrayList<String> GetLanPeers(){
+	public ArrayList<String> GetLanPeers(NetworkConfiguration nconfig){
 		
 		ArrayList<String> tlanscan = this.ScanLAN(this);
 		if(tlanscan.isEmpty() || this.node.isConnected()) return null;
@@ -93,13 +92,13 @@ public class Connection {
 		ArrayList<String> peerips = new ArrayList<String>();
 		for (int i = 0; i < tlanscan.size(); i++){
 			try {
-				this.netconfig.setBootstrap(InetAddress.getByName(tlanscan.get(i)));
+				nconfig.setBootstrap(InetAddress.getByName(tlanscan.get(i)));
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			if(this.node.connect(this.netconfig)){
+			if(this.node.connect(nconfig)){
 				peerips.add(tlanscan.get(i));
 				this.node.disconnect();
 			}
@@ -149,15 +148,19 @@ public class Connection {
 	
     private void GetReachableHosts(InetAddress inetAddress, int start, int stop, int divider) throws SocketException {
         if(start < 0) return;
-    	String ipAddress = inetAddress.toString();
-        ipAddress = ipAddress.substring(1, ipAddress.lastIndexOf('.')) + ".";
+    	String Localip = inetAddress.toString();
+        String ipAddress = Localip.substring(1, Localip.lastIndexOf('.')) + ".";
+        Localip = Localip.substring(1, Localip.length());
         for (int i = start; i < stop && i < 256; i++) {
             String otherAddress = ipAddress + String.valueOf(i);
 //            System.out.println("try: " + i);
             try {
-                if (InetAddress.getByName(otherAddress.toString()).isReachable(100)) {
-                    System.out.println(otherAddress);
-                    this.lanscan.add(otherAddress.toString());
+                if (InetAddress.getByName(otherAddress).isReachable(100)) {
+//                    System.out.println(otherAddress);
+                    if(!Localip.equals(otherAddress)){
+                        System.out.println(otherAddress + " " + Localip);
+                    	this.lanscan.add(otherAddress);
+                    }
                 }
             } catch (UnknownHostException e) {
                 e.printStackTrace();
@@ -199,7 +202,7 @@ public class Connection {
 			ArrayList<String> lAddList = getLocalIp();
 			lAddList.forEach((tadd) -> {
 				if(tadd.indexOf('.') >= 0){
-					System.out.println("Local IP: " + tadd);
+//					System.out.println("Local IP: " + tadd);
 					this.localip = tadd;
 				}
 			});

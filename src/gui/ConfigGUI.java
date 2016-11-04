@@ -1,13 +1,10 @@
 package gui;
 
 import centralprocessor.CommunicationsInterface;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import centralprocessor.CommunicationsInterface;
 import centralprocessor.PERSYSTSession;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
@@ -15,6 +12,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -23,7 +21,8 @@ public class ConfigGUI {
 	private Stage pstage;
 
 	private CommunicationsInterface comint;
-
+	private ChooseRootFolder dialog;
+	
 	// takes in communicationsinterface to call functions later
 	public ConfigGUI(CommunicationsInterface comint) {
 		this.comint = comint;
@@ -44,45 +43,7 @@ public class ConfigGUI {
 	public Stage getStage() {
 		return this.pstage;
 	}
-    	Text passHint = new Text("");
-    	passHint.setFont(new Font(20));
-    	passHint.setFill(Color.RED);
 
-    	HBox bHbox = new HBox();
-    	bHbox.setAlignment(Pos.CENTER);
-    	Button save = new Button("save");
-    	save.setOnAction(new EventHandler<ActionEvent>() {
-    	    @Override 
-    	    public void handle(ActionEvent e) {
-
-    	    }
-    	});
-    	
-    	Button cancel = new Button("cancel");
-    	cancel.setOnAction(new EventHandler<ActionEvent>() {
-    		@Override 
-    	    public void handle(ActionEvent e) {
-    			getStage().close();
-    		}
-    	});
-    	bHbox.getChildren().addAll(save, cancel);
-    	root.getChildren().addAll(title, userHbox, passHbox, passHint, bHbox);
-    }
-    
-    
-    private boolean login(String username, String password){
-    	//TODO 
-    	// Pass the username and password to the correct method
-    	return false;
-    }
-    
-    private boolean validateUsername(String s){
-    	return s.length() > 3;
-    }
-    
-    private boolean validatePassword(String s){
-    	return s.length() > 3;
-    }
 	private void populateRoot(VBox root, Stage stage) {
 		// Spacer add space between the label on the left and the button or text field on the right
 		Pane spacer = new Pane();
@@ -91,6 +52,11 @@ public class ConfigGUI {
 		HBox rootBox = new HBox();
 		Label rootLabel = new Label("RootFolder: " + comint.getRootFolder().toString());
 		Button rootBtn = new Button("Choose Root Folder");
+		rootBtn.setOnAction((event) -> {
+			dialog = new ChooseRootFolder(comint);
+			dialog.start(new Stage());
+			rootLabel.setText("RootFolder: " + comint.getRootFolder().toString());
+		});
 
 		rootBox.getChildren().addAll(rootLabel, spacer, rootBtn);
 		rootBox.setHgrow(spacer, Priority.ALWAYS);
@@ -142,14 +108,16 @@ public class ConfigGUI {
 		Button cancelBtn = new Button("Cancel");
 
 		cancelBtn.setOnAction((event) -> {
-			pstage.close();
+			this.pstage.close();
 		});
 
 		saveBtn.setOnAction((event) -> {
 			// Save the configs
-			// Check if the correct arguments are passed
-			PERSYSTSession.usr.setConfiguration("maxfilesize", maxSizeField.getText());
-			PERSYSTSession.usr.setConfiguration("port", portField.getText());
+//			 Check if the correct arguments are passed
+			if(PERSYSTSession.usr != null){
+				PERSYSTSession.usr.setConfiguration("maxfilesize", maxSizeField.getText());
+			}
+			this.pstage.close();
 		});
 
 		btnBox.getChildren().addAll(saveBtn, cancelBtn);
