@@ -71,11 +71,11 @@ public class CommunicationsInterface extends Application implements ICommunicati
 		this.pgui.getStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent we) {
-				System.out.println("goodbye world");
-				// do stuff before exit
+				System.out.println("Disconnecting node");
 				if (conNode.node.isConnected())
 					conNode.node.disconnect();
-				Platform.exit();
+				System.out.println("Saving config and shutting down");
+				sendShutdownSignal();
 			}
 		});
 
@@ -145,10 +145,14 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	 * This method stores the current configurations in the file system
 	 */
 	public void saveConfigurations() {
-		PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
-		File file = new File(this.getRootFolder().getAbsolutePath() + "/.persystconf");
-		file.delete();
-		storage.store(this.getConfigurationsData(), file);
+		try {
+			PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
+			File file = new File(this.getRootFolder().getAbsolutePath() + "/.persystconf");
+			file.delete();
+			storage.store(this.getConfigurationsData(), file);
+		} catch(Exception e) {
+			System.out.println("Failed to save config due to " + e.toString());
+		}
 	}
 
 	@Override
@@ -156,12 +160,17 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	 * This method updates the current configurations from the file system
 	 */
 	public void updateConfigurations() {
-		PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
-		byte[] file = storage.read(new File(this.getRootFolder().getAbsolutePath() + "/.persystconf"));
-		if (file.length == 0)
+		try {
+			PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
+			byte[] file = storage.read(new File(this.getRootFolder().getAbsolutePath() + "/.persystconf"));
+			if (file.length == 0)
+				return;
+			PersystConfiguration configObj = (PersystConfiguration) (PersistentStorage.fromBytes(file));
+			PERSYSTSession.usr.setConfigurations(configObj);
+		} catch(NullPointerException e) {
+			//This means the user hasn't logged in
 			return;
-		PersystConfiguration configObj = (PersystConfiguration) (PersistentStorage.fromBytes(file));
-		PERSYSTSession.usr.setConfigurations(configObj);
+		}
 	}
 
 	@Override
