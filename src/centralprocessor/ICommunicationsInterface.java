@@ -1,6 +1,8 @@
 package centralprocessor;
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hive2hive.core.api.interfaces.IFileManager;
 import org.hive2hive.processframework.interfaces.IProcessComponent;

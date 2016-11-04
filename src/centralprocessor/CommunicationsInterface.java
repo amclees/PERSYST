@@ -2,6 +2,7 @@ package centralprocessor;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import org.hive2hive.core.api.interfaces.IFileManager;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
@@ -18,6 +19,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import gui.*;
+import javafx.stage.WindowEvent;
 
 /**
  * Implementation of communications interface
@@ -34,44 +36,51 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	ConnectGUI congui;
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		
 		//prevent app from closing on all windows exit
 		Platform.setImplicitExit(false);
 		//gui setup
-		this.cgui = new ConfigGUI(this);
-		this.cgui.start(new Stage());
+
+//		this.cgui = new ConfigGUI(this);
+//		this.cgui.start(new Stage());
+		//this.cgui.getStage().setOnCloseRequest(value);
 //		this.cgui.getStage().setOnCloseRequest(value);
 		
-		this.congui = new ConnectGUI(this);
-		this.congui.start(new Stage());
+//		this.congui = new ConnectGUI(this);
+//		this.congui.start(new Stage());
 		
 		this.lscreen = new LoadScreen(this);
 		this.lscreen.start(new Stage());
 		
-		this.lgui = new LoginGUI(this);
-		this.lgui.start(new Stage());
+//		this.lgui = new LoginGUI(this);
+//		this.lgui.start(new Stage());
 		
-		this.nvgui = new NetworkViewGUI(this);
-		this.nvgui.start(new Stage());
+//		this.nvgui = new NetworkViewGUI(this);
+//		this.nvgui.start(new Stage());
 		
 		this.pgui = new PersystGUI(this);
 		this.pgui.start(primaryStage);
+		
 		this.pgui.getStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent we) {
-				System.out.println("goodbye world");
+//				System.out.println("goodbye world");
 				//do stuff before exit
 				Platform.exit();
 			}
 		});      
 		
 		//locks pgui while nvgui open
-		this.nvgui.getStage().initModality(Modality.WINDOW_MODAL);
-		this.nvgui.getStage().initOwner(this.pgui.getStage());
+//		this.nvgui.getStage().initModality(Modality.WINDOW_MODAL);
+//		this.nvgui.getStage().initOwner(this.pgui.getStage());
 		
 		//show initial display after here
-		this.cgui.getStage().show();
+//		this.cgui.getStage().show();
 		this.pgui.getStage().show();
-		this.nvgui.getStage().show();
+		this.pgui.getStage().sizeToScene();
+//		this.nvgui.getStage().show();
+		this.lscreen.getStage().show();
+		lscreen.setLabelText("Hang in there!");
 	}
 	
 	public static void main(String[] args) {
@@ -224,8 +233,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 
 	@Override
 	public File getRootFolder() {
-		return (File) this.getConfiguration("rootfolder");
+		return new File("C:\\Users\\Jpox\\Desktop\\Delete Me");
+//		return (File) this.getConfiguration("rootfolder");
 	}
-
-
 }
