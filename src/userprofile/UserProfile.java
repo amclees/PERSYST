@@ -43,7 +43,7 @@ public class UserProfile {
 		// configMap.put("port", null);
 		configMap.put("maxfilesize", config.getFileConfig().getMaxFileSize());
 		//configMap.put("iplist", this.ipList);
-		this.config.rootFolder = this.rootFolder;
+		//this.config.rootFolder = this.rootFolder;
 		PERSYSTSession.rootFolder = this.rootFolder;
 		PERSYSTSession.config = this.config;
 	}
@@ -65,8 +65,8 @@ public class UserProfile {
 		// this.pin = new BigInteger(130, new SecureRandom()).toString(32);
 		this.pin = "Default PIN";
 		this.config = config;
-		PERSYSTSession.rootFolder = config.rootFolder;
-		this.rootFolder = config.rootFolder;
+		//PERSYSTSession.rootFolder = config.rootFolder;
+		this.rootFolder = PERSYSTSession.rootFolder;
 		//config.rootFolder = PERSYSTSession.rootFolder;
 		updateMap();
 		
@@ -93,7 +93,7 @@ public class UserProfile {
 	 */
 	public void setConfiguration(String configuration, Serializable value) {
 		if (configuration.equals("rootfolder")) {
-			this.config.rootFolder = (File) value;
+			//this.config.rootFolder = (File) value;
 			PERSYSTSession.rootFolder = (File) value;
 			this.rootFolder = (File) value;
 		} /*

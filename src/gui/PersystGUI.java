@@ -81,7 +81,7 @@ public class PersystGUI {
 		comint.lgui.getStage().setOnHidden(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent we) {
-				System.out.println("login success");
+				System.out.println("GUI Login worked");
 			}
 		}); 
 
@@ -176,6 +176,7 @@ public class PersystGUI {
         MenuItem configMenuItem = new MenuItem("Configurations...");
         options.getItems().add(configMenuItem);
         configMenuItem.setOnAction((event) -> {
+        	if(PERSYSTSession.usr == null) return;
             ConfigGUI dialog = new ConfigGUI(comint);
             dialog.start(new Stage());
             dialog.getStage().initModality(Modality.WINDOW_MODAL);
@@ -268,7 +269,12 @@ public class PersystGUI {
         if (file.isDirectory()) {
             hbox.getChildren().add(folderLarge());
         } else if (file.isFile()) {
-            String ext = file.getPath().substring(file.getPath().lastIndexOf('.'));
+        	String ext;
+        	try {
+        		 ext = file.getPath().substring(file.getPath().lastIndexOf('.'));
+        	} catch(Exception e) {
+        		 ext = ".txt";
+        	}
             if (ext.equalsIgnoreCase(".png") || ext.equalsIgnoreCase(".jpg")
                     || ext.equalsIgnoreCase(".jpeg") || ext.equalsIgnoreCase(".gif")) {
 

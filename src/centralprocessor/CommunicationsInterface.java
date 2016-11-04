@@ -1,6 +1,10 @@
 package centralprocessor;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.Serializable;
 
 import org.hive2hive.core.api.configs.FileConfiguration;
@@ -21,7 +25,6 @@ import gui.LoadScreen;
 import gui.LoginGUI;
 import gui.PersystGUI;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -56,11 +59,25 @@ public class CommunicationsInterface extends Application implements ICommunicati
 
 		this.conNode = new Connection(fconfig);
 
+		
+		
+		File rootFolder = new File(System.getProperty("user.home") + "/Desktop");
+		
+		try {
+			File initFile = new File("root.conf");
+			BufferedReader rd = new BufferedReader(new FileReader(initFile));
+			String path = rd.readLine();
+			rootFolder = new File(path);
+		} catch(Exception e) {}
+		
 		// default root folder desktop
-		PERSYSTSession.rootFolder = new File(System.getProperty("user.home") + "/Desktop");
+		PERSYSTSession.rootFolder = rootFolder;
+		
+		
+		
 
 		PERSYSTSession.config = new PersystConfiguration(fconfig);
-		PERSYSTSession.config.rootFolder = PERSYSTSession.rootFolder;
+		//PERSYSTSession.config.rootFolder = PERSYSTSession.rootFolder;
 
 		// gui setup
 		this.lgui = new LoginGUI(this);
@@ -158,9 +175,15 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	 */
 	public void saveConfigurations() {
 		try {
+			File initFile = new File("root.conf");
+			BufferedWriter out = new BufferedWriter(new FileWriter(initFile));
+			out.write(PERSYSTSession.rootFolder.getAbsolutePath());
+			out.close();
+			
 			PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
 			File file = new File(this.getRootFolder().getAbsolutePath() + "/.persystconf");
 			file.delete();
+			file = new File(this.getRootFolder().getAbsolutePath() + "/.persystconf");
 			storage.store(this.getConfigurationsData(), file);
 		} catch(Exception e) {
 			System.out.println("Failed to save config due to " + e.toString());
@@ -275,7 +298,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 		try {
 			// this.rootFolder = rootFolder;
 			PERSYSTSession.rootFolder = rootFolder;
-			PERSYSTSession.config.rootFolder = rootFolder;
+			//PERSYSTSession.config.rootFolder = rootFolder;
 			this.setConfiguration("rootfolder", rootFolder);
 			System.out.println("Set root folder to " + rootFolder.toString());
 			return true;

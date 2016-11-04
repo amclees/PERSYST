@@ -19,11 +19,11 @@ public class PersystConfiguration implements Serializable {
 	private static final long serialVersionUID = 7165537949083966221L;
 
 	private IFileConfiguration fileConfig;
-	public File rootFolder;
+	//public File rootFolder;
 
 	public PersystConfiguration(IFileConfiguration fileConfig) {
 		this.fileConfig = fileConfig;
-		this.rootFolder = PERSYSTSession.rootFolder;
+		//this.rootFolder = PERSYSTSession.rootFolder;
 	}
 
 	public FileConfiguration getFileConfig() {
