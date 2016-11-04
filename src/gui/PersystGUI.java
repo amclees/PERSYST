@@ -121,6 +121,15 @@ public class PersystGUI {
         return splitPane;
     }
 
+	/**
+	 * Creates a populated MenuBar for the main gui of PERSYST
+	 * menuItems File -> Exit		Closes the window
+	 * menuItems Help -> Sorry		Does Nothing
+	 * menuItems Options-> ChooseRootFolder		Opens the ChooseRootFolder dialog box
+	 * menuItems Options-> Refresh				Redraws most of the nodes in the gui
+	 * menuItems Options-> Configurations		Open the Config dialog box
+	 * 
+	 */
     public MenuBar createTopMenu() {
         Menu fileMenu = new Menu("File");
 
@@ -168,7 +177,6 @@ public class PersystGUI {
         
 	/**
 	 * Recreates the file directory tree and the file view
-	 * 
 	 */
     private void updateGui() {
     	selectedFile = comint.getRootFolder();
@@ -179,7 +187,6 @@ public class PersystGUI {
     
 	/**
 	 * Recreates the file directory tree
-	 * 
 	 */
     private void updateTreeDirectory() {
     	SplitPane splitPane = (SplitPane) root.getLeft();
@@ -189,7 +196,6 @@ public class PersystGUI {
     
 	/**
 	 * Recreates the file directory tree and the file view
-	 * 
 	 */
     private void updateNetWorkView() {
     	SplitPane splitPane = (SplitPane) root.getLeft();
@@ -225,7 +231,7 @@ public class PersystGUI {
     
         
 	/**
-	 * An hbox that displaces information about the selected file
+	 * An HBox that displaces information about the selected file
 	 * 
 	 * @param File
 	 *            The file should be the root folder
@@ -402,6 +408,9 @@ public class PersystGUI {
         }
     }
 
+	/**
+	 * A pair class used to store pairs
+	 */
     private class Pair {
         private String x, y;
 
@@ -432,6 +441,9 @@ public class PersystGUI {
         }
     }
     
+	/**
+	 * A custom TreeCell that adds a context menu to the cells
+	 */
     private final class ContextMenuTreeCell extends TreeCell<Pair> {
 
         private ContextMenu openMenu = new ContextMenu();

@@ -11,8 +11,14 @@ import javax.swing.filechooser.FileSystemView;
 
 public class ChooseRootFolder {
 
+	/**
+	 * the file that this class will select
+	 */
     private File selectedDirectory;
     
+	/**
+	 * boolean to check if a file has been selected
+	 */
     private Boolean directorySelected = false;
 	
 	private Stage pstage;
@@ -25,55 +31,58 @@ public class ChooseRootFolder {
 		this.comint = comint;
 	}
 
-	public void start(Stage primaryStage) {
-		this.pstage = primaryStage;
-		comint.getRootFolder();
-		chooseRoot(primaryStage);
+	/**
+	 * Use this if you want to change the root folder. This class will update
+	 * the root folder
+	 */
+	private void chooseRoot(Stage primaryStage) {
+	    File userDirectory;
+	    File persystRoot = comint.getRootFolder();
+	    
+	    // Checks if a root has been selected otherwise it defaults to user.home or C:/
+		if(persystRoot != null || persystRoot.isDirectory()){
+			userDirectory = persystRoot;
+		}
+		else{
+	        String userDirectoryString = System.getProperty("user.home");
+	        userDirectory = new File(userDirectoryString);
+	        if (!userDirectory.canRead()) {
+	            userDirectory = new File("C:/");
+	        }
+		}
+		
+	    DirectoryChooser dirChooser = new DirectoryChooser();
+	    dirChooser.setTitle("Choose Root Folder");
+	    dirChooser.setInitialDirectory(userDirectory);
+	    File selectedFile = dirChooser.showDialog(primaryStage);
+	
+	    selectedDirectory = selectedFile;
+	    
+	    // Updates the root folder in  PERSYST
+	    comint.setRootFolder(selectedFile);
 	}
 
 	public Stage getStage() {
 		return this.pstage;
 	}
 
+	/**
+	 * Getter for the selected file
+	 */
 	public File getSelectedDirectory(){
 		return selectedDirectory;
 	}
 	
+	/**
+	 * Returns true if a file has been selected by this class
+	 */
 	public Boolean isFileSelected(){
 		return directorySelected;
 	}
-	
-    private void chooseRoot(Stage primaryStage) {
-        File userDirectory;
-        File persystRoot = comint.getRootFolder();
-        
-    	if(persystRoot != null || persystRoot.isDirectory()){
-    		userDirectory = persystRoot;
-    	}
-    	else{
-            String userDirectoryString = System.getProperty("user.home");
-            userDirectory = new File(userDirectoryString);
-            if (!userDirectory.canRead()) {
-                userDirectory = new File("C:/");
-            }
-    	}
-    	
-        DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle("Choose Root Folder");
-        dirChooser.setInitialDirectory(userDirectory);
-        File selectedFile = dirChooser.showDialog(primaryStage);
 
-        selectedDirectory = selectedFile;
-        comint.setRootFolder(selectedFile);
-        
-//      FileChooser fileChooser = new FileChooser();
-//      fileChooser.setTitle("Open Resource File");
-//      fileChooser.getExtensionFilters().addAll(
-//      new ExtensionFilter("Text Files", "*.txt"),
-//      new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"),
-//      new ExtensionFilter("Audio Files", "*.wav", "*.mp3", "*.aac"),
-//      new ExtensionFilter("All Files", "*.*"));
-//		File selectedFile = fileChooser.showOpenDialog(primaryStage);
-
-    }
+	public void start(Stage primaryStage) {
+		this.pstage = primaryStage;
+		comint.getRootFolder();
+		chooseRoot(primaryStage);
+	}
 }
