@@ -1,9 +1,13 @@
 package centralprocessor;
 
+import java.io.File;
+
+import configurations.PersystConfiguration;
 import userprofile.UserProfile;
 
 public class PERSYSTSession {
-	public static ICommunicationsInterface comm;
+	public static CommunicationsInterface comm;
 	public static UserProfile usr; //Initialize in Central Processor
-	public static FileConfiguration confi = new FileConfiguration();
+	public static PersystConfiguration config; //Initialize in Central Processor
+	public static File rootFolder;
 }
