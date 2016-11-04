@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import org.hive2hive.core.api.configs.NetworkConfiguration;
 
 import centralprocessor.CommunicationsInterface;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -36,14 +37,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 public class NetworkView extends VBox {
-	private ObservableList<Button> cButtons;
+//	private ObservableList<Button> cButtons;
 	private CommunicationsInterface comint;
 	private ProgressIndicator pi;
 	private Label pleasewait;
 	
-	public ObservableList<Button> getCButtons(){
-		return cButtons;
-	}
+//	public ObservableList<Button> getCButtons(){
+//		return cButtons;
+//	}
 	
 	public NetworkView(ArrayList<String> ipList, CommunicationsInterface comint){
 		
@@ -51,7 +52,7 @@ public class NetworkView extends VBox {
 		pi = new ProgressIndicator(-1);
 		
 		this.comint = comint;
-		cButtons = FXCollections.observableArrayList();
+//		cButtons = FXCollections.observableArrayList();
 		
 		HBox hspace = new HBox();
 		HBox.setHgrow(hspace, Priority.ALWAYS);
@@ -87,10 +88,11 @@ public class NetworkView extends VBox {
 	        	System.out.println("Connect to " + ipAddress);
 	        	if(tryConnect(ipAddress)){
 	        		setDisable();
-	        	}
+	        		setInfoViewText("Network: Connected");
+	    			comint.lgui.getStage().show();
+	        	} else
+	        		connectionFail();
 			}
-			
-			connectionFail();
         });
 		
 		Button slButton = new Button("Scan LAN");
@@ -100,11 +102,23 @@ public class NetworkView extends VBox {
 			Thread slthread = new Thread() {
 			    public void run() {	    	
 					comint.netconfig = NetworkConfiguration.createInitial();
-					comint.conNode.GetLanPeers(comint.netconfig);
-					setNotBusy();
+					ArrayList<String> ipList = comint.conNode.GetLanPeers(comint.netconfig);
+					Platform.runLater(new Runnable() {
+					    @Override
+					    public void run() {
+					        //if you change the UI, do it here !
+					    	refresh(ipList);
+							setNotBusy();
+					    	
+					    }
+					});
 			    }  
 			};
-			slthread.start();
+			
+			try {
+				slthread.start();
+			} catch (IllegalStateException e){
+			}
         });
 		
 		connectoptions.getChildren().addAll(cnButton, ipField, ciButton, slButton);
@@ -133,7 +147,7 @@ public class NetworkView extends VBox {
 
 	public void refresh(ArrayList<String> ipList){
 		this.getChildren().remove(2, this.getChildren().size());
-		this.cButtons.clear();
+//		this.cButtons.clear();
 		
 		Collections.sort(ipList);
 		for(String ip : ipList){
@@ -168,12 +182,13 @@ public class NetworkView extends VBox {
         	System.out.println("Connect to " + ipAddress);
         	if(tryConnect(ipAddress)){
         		setDisable();
-        	}
-        	
-        	connectionFail();
+        		setInfoViewText("Network: Connected");
+    			comint.lgui.getStage().show();
+        	} else
+        		connectionFail();
         });
 
-		this.cButtons.add(btn);
+//		this.cButtons.add(btn);
 		
 		HBox box = new HBox(20);
 

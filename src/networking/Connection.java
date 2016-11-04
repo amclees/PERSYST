@@ -128,7 +128,11 @@ public class Connection {
 			    }  
 			});
 //			System.out.println("start: " + start + " stop: " + stop);
-			scanthreads.get(i).start();
+			try {
+				scanthreads.get(i).start();
+			} catch (IllegalStateException e){
+				scanthreads.get(i).interrupt();
+			}
 		}
 		
 		cnode.waitscan();
@@ -158,7 +162,7 @@ public class Connection {
                 if (InetAddress.getByName(otherAddress).isReachable(100)) {
 //                    System.out.println(otherAddress);
                     if(!Localip.equals(otherAddress)){
-                        System.out.println(otherAddress + " " + Localip);
+//                        System.out.println(otherAddress + " " + Localip);
                     	this.lanscan.add(otherAddress);
                     }
                 }

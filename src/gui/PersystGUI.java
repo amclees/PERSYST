@@ -108,7 +108,6 @@ public class PersystGUI {
         // TODO Get ip addresses
         //PERSYSTSession.usr.getConfiguration("ipaddress");
 		ArrayList<String> iplist = new ArrayList<>();
-		iplist.add("8.8.8.8");
         try {
         	iplist.add(InetAddress.getLocalHost().getHostAddress());
  
@@ -208,7 +207,7 @@ public class PersystGUI {
     	selectedFile = comint.getRootFolder();
     	updateFileView();
     	updateTreeDirectory();
-    	updateNetWorkView();
+//    	updateNetWorkView();
     }
     
 	/**
