@@ -60,6 +60,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 		PERSYSTSession.rootFolder = new File(System.getProperty("user.home") + "/Desktop");
 
 		PERSYSTSession.config = new PersystConfiguration(fconfig);
+		PERSYSTSession.config.rootFolder = PERSYSTSession.rootFolder;
 
 		// gui setup
 		this.lgui = new LoginGUI(this);
@@ -119,20 +120,31 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	 */
 	public boolean login(String username, String password) {
 		try {
-			File file = new File(this.getRootFolder().getAbsolutePath() + "/.persystconf");
+			System.out.println("The pre-login root folder is " + PERSYSTSession.rootFolder);
+			File file = new File(PERSYSTSession.rootFolder + "/.persystconf");
 			if (file.exists()) {
-				PersistentStorage storage = new PersistentStorage(this.getPassword(), "Default PIN");
+				PersistentStorage storage = new PersistentStorage(password, "Default PIN");
 				byte[] config = storage.read(file);
+				PersystConfiguration configObj;
 				if (config.length == 0)
-					return false;
-				PersystConfiguration configObj = (PersystConfiguration) (PersistentStorage.fromBytes(config));
+					configObj = (PersystConfiguration) (PersistentStorage.fromBytes(config));
+				else {
+					configObj = PERSYSTSession.config;
+				}
 				PERSYSTSession.usr = new UserProfile(username, password, configObj);
 				this.conNode.getNode().getUserManager().createLoginProcess(
 						new UserCredentials(username, password, "Default PIN"),
 						new ConsoleFileAgent(PERSYSTSession.rootFolder));
+				System.out.println("The post-login root folder is " + PERSYSTSession.rootFolder);
 				return true;
 			} else {
-				return false;
+				
+				PERSYSTSession.usr = new UserProfile(username, password, PERSYSTSession.config);
+				this.conNode.getNode().getUserManager().createLoginProcess(
+						new UserCredentials(username, password, "Default PIN"),
+						new ConsoleFileAgent(PERSYSTSession.rootFolder));
+				System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);
+				return true;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -152,6 +164,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 			storage.store(this.getConfigurationsData(), file);
 		} catch(Exception e) {
 			System.out.println("Failed to save config due to " + e.toString());
+			e.printStackTrace();
 		}
 	}
 
@@ -246,7 +259,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	}
 
 	@Override
-	public Serializable fromBytes(byte[] data) {
+	public Object fromBytes(byte[] data) {
 		return PersistentStorage.fromBytes(data);
 	}
 
@@ -257,11 +270,17 @@ public class CommunicationsInterface extends Application implements ICommunicati
 
 	@Override
 	public boolean setRootFolder(File rootFolder) {
+		System.out.println("Trying to set root folder to " + rootFolder.toString());
+		if(!rootFolder.isDirectory()) return false;
 		try {
 			// this.rootFolder = rootFolder;
+			PERSYSTSession.rootFolder = rootFolder;
+			PERSYSTSession.config.rootFolder = rootFolder;
 			this.setConfiguration("rootfolder", rootFolder);
+			System.out.println("Set root folder to " + rootFolder.toString());
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
