@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.hive2hive.core.api.configs.FileConfiguration;
+import org.hive2hive.core.api.configs.NetworkConfiguration;
+import org.hive2hive.core.api.interfaces.IFileConfiguration;
 import org.hive2hive.core.api.interfaces.IFileManager;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
@@ -18,6 +21,7 @@ import javafx.event.EventHandler;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import networking.Connection;
 import gui.*;
 import javafx.stage.WindowEvent;
 
@@ -28,19 +32,50 @@ import javafx.stage.WindowEvent;
  *
  */
 public class CommunicationsInterface extends Application implements ICommunicationsInterface {
-	PersystGUI pgui;
-	ConfigGUI cgui;
-	LoadScreen lscreen;
-	LoginGUI lgui;
-	NetworkViewGUI nvgui;
-	ConnectGUI congui;
+	public PersystGUI pgui;
+	public ConfigGUI cgui;
+	public LoadScreen lscreen;
+	public LoginGUI lgui;
+//	public NetworkViewGUI nvgui;
+	public ConnectGUI congui;
+	
+	private File rootFolder;
+	
+	public NetworkConfiguration netconfig;
+	public IFileConfiguration fconfig;
+	public Connection conNode;
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		
+		PERSYSTSession.comm = this;
 		//prevent app from closing on all windows exit
-		Platform.setImplicitExit(false);
+//		Platform.setImplicitExit(false);
+		fconfig = FileConfiguration.createDefault();
+		
+		this.conNode = new Connection(fconfig);
+		
+		//default root folder desktop
+		this.rootFolder = new File(System.getProperty("user.home") + "/Desktop");
+		
 		//gui setup
-
+		this.lgui = new LoginGUI(this);
+		this.lgui.start(new Stage());
+		
+		this.pgui = new PersystGUI(this);
+		this.pgui.start(primaryStage);
+		
+		this.pgui.getStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent we) {
+				System.out.println("goodbye world");
+				//do stuff before exit
+				if(conNode.node.isConnected())
+					conNode.node.disconnect();
+				Platform.exit();
+			}
+		});   
+		
+		this.lgui.getStage().initModality(Modality.WINDOW_MODAL);
+		this.lgui.getStage().initOwner(this.pgui.getStage());
 //		this.cgui = new ConfigGUI(this);
 //		this.cgui.start(new Stage());
 		//this.cgui.getStage().setOnCloseRequest(value);
@@ -51,24 +86,11 @@ public class CommunicationsInterface extends Application implements ICommunicati
 		
 		this.lscreen = new LoadScreen(this);
 		this.lscreen.start(new Stage());
-		
-//		this.lgui = new LoginGUI(this);
-//		this.lgui.start(new Stage());
-		
+		  
 //		this.nvgui = new NetworkViewGUI(this);
 //		this.nvgui.start(new Stage());
 		
-		this.pgui = new PersystGUI(this);
-		this.pgui.start(primaryStage);
-		
-		this.pgui.getStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-			@Override
-			public void handle(WindowEvent we) {
-//				System.out.println("goodbye world");
-				//do stuff before exit
-				Platform.exit();
-			}
-		});      
+		   
 		
 		//locks pgui while nvgui open
 //		this.nvgui.getStage().initModality(Modality.WINDOW_MODAL);
@@ -79,8 +101,8 @@ public class CommunicationsInterface extends Application implements ICommunicati
 		this.pgui.getStage().show();
 		this.pgui.getStage().sizeToScene();
 //		this.nvgui.getStage().show();
-		this.lscreen.getStage().show();
-		lscreen.setLabelText("Hang in there!");
+//		this.lscreen.getStage().show();
+//		lscreen.setLabelText("Hang in there!");
 	}
 	
 	public static void main(String[] args) {
@@ -224,7 +246,8 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	@Override
 	public boolean setRootFolder(File rootFolder) {
 		try {
-			this.setConfiguration("rootfolder", rootFolder);
+			this.rootFolder = rootFolder;
+//			this.setConfiguration("rootfolder", rootFolder);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -233,7 +256,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 
 	@Override
 	public File getRootFolder() {
-		return new File("C:\\Users\\Jpox\\Desktop\\Delete Me");
+		return this.rootFolder;
 //		return (File) this.getConfiguration("rootfolder");
 	}
 }

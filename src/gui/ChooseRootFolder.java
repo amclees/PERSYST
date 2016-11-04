@@ -3,6 +3,7 @@ package gui;
 import centralprocessor.CommunicationsInterface;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class ChooseRootFolder {
 	 * Use this if you want to change the root folder. This class will update
 	 * the root folder
 	 */
-	private void chooseRoot(Stage primaryStage) {
+	private void chooseRoot() {
 	    File userDirectory;
 	    File persystRoot = comint.getRootFolder();
 	    
@@ -54,12 +55,15 @@ public class ChooseRootFolder {
 	    DirectoryChooser dirChooser = new DirectoryChooser();
 	    dirChooser.setTitle("Choose Root Folder");
 	    dirChooser.setInitialDirectory(userDirectory);
-	    File selectedFile = dirChooser.showDialog(primaryStage);
+	    File selectedFile = dirChooser.showDialog(this.pstage);
 	
 	    selectedDirectory = selectedFile;
 	    
 	    // Updates the root folder in  PERSYST
-	    comint.setRootFolder(selectedFile);
+	    if(selectedFile != null)
+	    	comint.setRootFolder(selectedFile);
+	    
+//	    System.out.println("after set root comint: " + comint.getRootFolder().toString());
 	}
 
 	public Stage getStage() {
@@ -83,6 +87,6 @@ public class ChooseRootFolder {
 	public void start(Stage primaryStage) {
 		this.pstage = primaryStage;
 		comint.getRootFolder();
-		chooseRoot(primaryStage);
+		chooseRoot();
 	}
 }

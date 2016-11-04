@@ -16,6 +16,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
@@ -25,8 +26,9 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-
+import javafx.stage.WindowEvent;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.TreeCell;
@@ -37,6 +39,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.util.Callback;
 import javax.swing.filechooser.FileSystemView;
 
@@ -53,6 +56,7 @@ public class PersystGUI {
     private Stage pstage;
     private CommunicationsInterface comint;
     private File selectedFile;	// selectedFile lets the center view know what file is selected
+    public VBox infoView;
 
     private HBox fileView;
     
@@ -73,6 +77,13 @@ public class PersystGUI {
         root.setLeft(createLeft());
         root.setTop(createTopMenu());
         root.setCenter(createRight());
+        
+		comint.lgui.getStage().setOnHidden(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent we) {
+				System.out.println("login success");
+			}
+		}); 
 
         Scene scene = new Scene(root, 800, 600);
         this.pstage.setScene(scene);
@@ -103,7 +114,7 @@ public class PersystGUI {
  
         } catch (UnknownHostException e) {}
 
-        splitPane.getItems().add(new NetworkView(iplist));
+        splitPane.getItems().add(new NetworkView(iplist, comint));
         return splitPane;
     }
 
@@ -115,7 +126,14 @@ public class PersystGUI {
     private SplitPane createRight(){
         SplitPane splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
-        splitPane.getItems().add(fileView);    	
+        splitPane.getItems().add(fileView);
+        
+        infoView = new VBox();
+        Label username = new Label("Username: ");
+        Label conStatus = new Label("Network: Disconnected");
+        infoView.getChildren().addAll(username, conStatus);
+        splitPane.getItems().add(infoView);
+        
         splitPane.getItems().add(new DownloadView(comint));
         
         return splitPane;
@@ -142,13 +160,13 @@ public class PersystGUI {
         
         Menu options = new Menu("Options");
         
-        MenuItem rootMenuItem = new MenuItem("Choose Root Folder...");
-        options.getItems().add(rootMenuItem);
-        rootMenuItem.setOnAction((event) -> {
-            ChooseRootFolder dialog = new ChooseRootFolder(comint);
-            dialog.start(new Stage());
-            updateGui();
-        });     
+//        MenuItem rootMenuItem = new MenuItem("Choose Root Folder...");
+//        options.getItems().add(rootMenuItem);
+//        rootMenuItem.setOnAction((event) -> {
+//            ChooseRootFolder dialog = new ChooseRootFolder(comint);
+//            dialog.start(new Stage());
+//            updateGui();
+//        });     
         
         MenuItem refreshMenuItem = new MenuItem("Refresh");
         options.getItems().add(refreshMenuItem);
@@ -161,8 +179,16 @@ public class PersystGUI {
         configMenuItem.setOnAction((event) -> {
             ConfigGUI dialog = new ConfigGUI(comint);
             dialog.start(new Stage());
+            dialog.getStage().initModality(Modality.WINDOW_MODAL);
+            dialog.getStage().initOwner(pstage);
+            dialog.getStage().setOnHidden(new EventHandler<WindowEvent>() {
+            	@Override
+				public void handle(WindowEvent we) {
+            		updateGui();
+				}
+			});
+
             dialog.getStage().show();
-            updateGui();
         });     
         
         
