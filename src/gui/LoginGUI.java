@@ -26,25 +26,11 @@ public class LoginGUI {
 		this.comint = comint;
 	}
 
-	// @Override
-	public void start(Stage primaryStage) {
-		this.pstage = primaryStage;
-		this.pstage.setTitle("Log In");
-		VBox root = new VBox(20);
-		populateRoot(root, this.pstage);
-
-		Scene scene = new Scene(root, 600, 250);
-		this.pstage.setScene(scene);
-	}
-
 	public Stage getStage() {
 		return this.pstage;
 	}
 
 	private void populateRoot(VBox root, Stage stage) {
-
-		// root.set
-
 		root.setAlignment(Pos.CENTER);
 
 		Text title = new Text("PERSYST Login");
@@ -102,11 +88,23 @@ public class LoginGUI {
 		root.getChildren().addAll(title, userHbox, passHbox, passHint, loginBtn);
 	}
 
+	public void start(Stage primaryStage) {
+		this.pstage = primaryStage;
+		this.pstage.setTitle("Log In");
+		VBox root = new VBox(20);
+		populateRoot(root, this.pstage);
+	
+		Scene scene = new Scene(root, 600, 250);
+		this.pstage.setScene(scene);
+	}
+
 	private boolean validateUsername(String s) {
+		// TODO check if H2H requires additional validation
 		return s.length() > 3;
 	}
 
 	private boolean validatePassword(String s) {
+		// TODO check if H2H requires additional validation
 		return s.length() > 3;
 	}
 
