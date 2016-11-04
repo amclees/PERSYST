@@ -57,7 +57,7 @@ public class ConfigGUI {
 		rootBtn.setOnAction((event) -> {
 			dialog = new ChooseRootFolder(comint);
 			dialog.start(new Stage());
-			rootLabel.setText("Root Folder has been changed");
+			rootLabel.setText(comint.getRootFolder().getAbsolutePath() + " is the new root folder.");
 			
 		});
 
@@ -84,7 +84,7 @@ public class ConfigGUI {
 		HBox maxSizeBox = new HBox();
 		Label maxSizeLabel = new Label("Max file size: ");
 		TextField maxSizeField = new TextField();
-		maxSizeField.setPromptText(PERSYSTSession.config.getFileConfig().getMaxFileSize() + "");
+		maxSizeField.setText(PERSYSTSession.config.getFileConfig().getMaxFileSize() + "");
 
 		// Uncomment once PERSYSTSession.usr.getConfiguration() works
 		// Check the cast
@@ -124,7 +124,7 @@ public class ConfigGUI {
 			}
 			this.pstage.close();
 		});
-
+		
 		btnBox.getChildren().addAll(saveBtn, cancelBtn);
 		btnBox.setAlignment(Pos.BOTTOM_RIGHT);
 		
