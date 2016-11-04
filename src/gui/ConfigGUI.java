@@ -42,6 +42,7 @@ public class ConfigGUI {
 	}
 
 	private void populateRoot(VBox root, Stage stage) {
+		// Spacer add space between the label on the left and the button or text field on the right
 		Pane spacer = new Pane();
 
 		// Root folder
@@ -57,7 +58,11 @@ public class ConfigGUI {
 		Label portLable = new Label("Port: ");
 		TextField portField = new TextField();
 		portField.setPromptText("The current port goes here");
-		// portField.setPromptText(PERSYSTSession.usr.getConfiguration("port").toString());
+		
+		// Uncomment once PERSYSTSession.usr.getConfiguration() works
+		// Check the cast
+		
+		// portField.setPromptText( (String) PERSYSTSession.usr.getConfiguration("port"));
 
 		spacer = new Pane();
 		portBox.getChildren().addAll(portLable, spacer, portField);
@@ -68,11 +73,16 @@ public class ConfigGUI {
 		Label maxSizeLabel = new Label("Max file size: ");
 		TextField maxSizeField = new TextField();
 		maxSizeField.setPromptText("The current size goes here");
+
+		// Uncomment once PERSYSTSession.usr.getConfiguration() works
+		// Check the cast
+		
 		// portField.setPromptText(PERSYSTSession.usr.getConfiguration("maxfilesize").toString());
 		maxSizeField.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if (newValue.matches("\\d+")) {
+				// TODO this block is causing exceptions when a letter is put first
+				if (newValue.matches("\\d*")) {
 					int value = Integer.parseInt(newValue);
 				} else {
 					maxSizeField.setText(oldValue);
@@ -95,6 +105,7 @@ public class ConfigGUI {
 
 		saveBtn.setOnAction((event) -> {
 			// Save the configs
+			// Check if the correct arguments are passed
 			PERSYSTSession.usr.setConfiguration("maxfilesize", maxSizeField.getText());
 			PERSYSTSession.usr.setConfiguration("port", portField.getText());
 		});
