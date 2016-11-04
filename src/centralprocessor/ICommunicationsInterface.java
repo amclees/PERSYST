@@ -1,6 +1,8 @@
 package centralprocessor;
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hive2hive.core.api.interfaces.IFileManager;
 import org.hive2hive.processframework.interfaces.IProcessComponent;
@@ -74,7 +76,7 @@ public interface ICommunicationsInterface {
 	 *            The byte array containing the object
 	 * @return The object from the data. Null if the data is not a valid object.
 	 */
-	public Serializable fromBytes(byte[] data);
+	public Object fromBytes(byte[] data);
 
 	/**
 	 * These method creates a byte array from an object.
