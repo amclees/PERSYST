@@ -306,6 +306,7 @@ public class PersystGUI {
         			while(rd.ready()) {
         				textNode.setText(textNode.getText() + "\n" + rd.readLine());
         			}
+        			rd.close();
             	} catch(Exception e) {}
             	ScrollPane scroll = new ScrollPane();
             	scroll.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
