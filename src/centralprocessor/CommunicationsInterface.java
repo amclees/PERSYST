@@ -70,7 +70,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 		this.ftrans = new FileTransfer();
 		
 		
-		File rootFolder = new File(System.getProperty("user.home") + "/Desktop");
+		File rootFolder = new File(System.getProperty("user.home") + "\\Documents");
 		
 		try {
 			File initFile = new File("root.conf");
@@ -187,7 +187,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				if(node.getFile().exists()) continue;
 				else {
 					IProcessComponent<Void> download = this.conNode.getNode().getFileManager().createDownloadProcess(node.getFile());
-					PERSYSTSession.comm.ftrans.addProcess(download, file.getName());
+					PERSYSTSession.comm.ftrans.addProcess(download, node.getFile().getName());
 					download.execute();
 				}
 			}
