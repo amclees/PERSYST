@@ -73,7 +73,7 @@ public class Connection {
 		if (this.node.connect(nconfig)) {
 
 			// connect the event bus
-			this.node.getFileManager().subscribeFileEvents(new FileEventListener(node.getFileManager()));
+			this.node.getFileManager().subscribeFileEvents(new FileEventListener(this.node.getFileManager()));
 			
 			
 

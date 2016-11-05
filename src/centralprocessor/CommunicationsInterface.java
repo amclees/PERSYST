@@ -13,6 +13,7 @@ import org.hive2hive.core.api.interfaces.IFileConfiguration;
 import org.hive2hive.core.api.interfaces.IFileManager;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
+import org.hive2hive.core.processes.files.list.FileNode;
 import org.hive2hive.core.security.UserCredentials;
 import org.hive2hive.processframework.exceptions.InvalidProcessStateException;
 import org.hive2hive.processframework.exceptions.ProcessExecutionException;
@@ -20,6 +21,7 @@ import org.hive2hive.processframework.interfaces.IProcessComponent;
 
 import configurations.PersystConfiguration;
 import filemanager.ConsoleFileAgent;
+import filemanager.FileEventListener;
 import filemanager.FileObserver;
 import filemanager.FileObserverListener;
 import filemanager.FileUtils;
@@ -179,6 +181,16 @@ public class CommunicationsInterface extends Application implements ICommunicati
 						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
 				System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);		
 			}
+			IProcessComponent<FileNode> fileList = this.conNode.getNode().getFileManager().createFileListProcess();
+			FileNode fileNode = fileList.execute();
+			for(FileNode node : FileNode.getNodeList(fileNode, true, true)) {
+				if(node.getFile().exists()) continue;
+				else {
+					IProcessComponent<Void> download = this.conNode.getNode().getFileManager().createDownloadProcess(node.getFile());
+					download.execute();
+				}
+			}
+			
 			FileObserver fileObserver = new FileObserver(PERSYSTSession.rootFolder, 1000);
 			FileObserverListener listener = new FileObserverListener(this.conNode.getNode().getFileManager());
 			
@@ -192,9 +204,13 @@ public class CommunicationsInterface extends Application implements ICommunicati
 			
 			
 			
+			
 			fileObserver.addFileObserverListener(listener);
 			
 			fileObserver.start();
+			
+		
+			
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
