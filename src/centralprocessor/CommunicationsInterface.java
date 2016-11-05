@@ -20,6 +20,8 @@ import org.hive2hive.processframework.interfaces.IProcessComponent;
 
 import configurations.PersystConfiguration;
 import filemanager.ConsoleFileAgent;
+import filemanager.FileObserver;
+import filemanager.FileObserverListener;
 import filemanager.FileUtils;
 import filemanager.PersistentStorage;
 import gui.ConfigGUI;
@@ -194,7 +196,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				
 				System.out.println("The post-login root folder is " + PERSYSTSession.rootFolder);
 				this.uploadOwnFiles();
-				return true;
+				
 			} else {
 				UserCredentials cred = new UserCredentials(username, password, "Default PIN");
 				PERSYSTSession.usr = new UserProfile(username, password, PERSYSTSession.config);
@@ -204,8 +206,12 @@ public class CommunicationsInterface extends Application implements ICommunicati
 						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
 				System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);
 				this.uploadOwnFiles();
-				return true;
+				
 			}
+			FileObserver fileObserver = new FileObserver(this.getRootFolder(), 5000);
+			FileObserverListener listener = new FileObserverListener(this.conNode.getNode().getFileManager());
+			fileObserver.addFileObserverListener(listener);
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

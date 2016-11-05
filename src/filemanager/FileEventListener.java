@@ -49,7 +49,7 @@ public class FileEventListener implements IFileEventListener {
 	 * @author Andrew
 	 */
 	private void downloadProcessPersystWrapper(File file) throws InvalidProcessStateException, ProcessExecutionException, NoSessionException, NoPeerConnectionException{
-		IProcessComponent<Void> downloadProcess = fileManager.createDownloadProcess(file);
+		IProcessComponent<Void> downloadProcess = fileManager.createUpdateProcess(file);
 		downloadProcess.execute();
 	}
 
