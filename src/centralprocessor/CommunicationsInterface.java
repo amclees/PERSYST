@@ -186,17 +186,21 @@ public class CommunicationsInterface extends Application implements ICommunicati
 					conNode.Connect(this.netconfig);
 				}
 				PERSYSTSession.usr = new UserProfile(username, password, configObj);
+				UserCredentials cred = new UserCredentials(username, password, "Default PIN");
+				if (!this.conNode.node.getUserManager().isRegistered(cred.getUserId())) this.conNode.getNode().getUserManager().createRegisterProcess(cred).execute();
 				this.conNode.getNode().getUserManager().createLoginProcess(
-						new UserCredentials(username, password, "Default PIN"),
+						cred,
 						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
+				
 				System.out.println("The post-login root folder is " + PERSYSTSession.rootFolder);
 				this.uploadOwnFiles();
 				return true;
 			} else {
-				
+				UserCredentials cred = new UserCredentials(username, password, "Default PIN");
 				PERSYSTSession.usr = new UserProfile(username, password, PERSYSTSession.config);
+				if (!this.conNode.node.getUserManager().isRegistered(cred.getUserId())) this.conNode.getNode().getUserManager().createRegisterProcess(new UserCredentials(username, password, "Default PIN")).execute();
 				this.conNode.getNode().getUserManager().createLoginProcess(
-						new UserCredentials(username, password, "Default PIN"),
+						cred,
 						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
 				System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);
 				this.uploadOwnFiles();
