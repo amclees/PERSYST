@@ -30,6 +30,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import networking.Connection;
+import networking.FileTransfer;
 import userprofile.UserProfile;
 
 /**
@@ -49,6 +50,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	public NetworkConfiguration netconfig;
 	public IFileConfiguration fconfig;
 	public Connection conNode;
+	public FileTransfer ftrans;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -58,7 +60,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 		fconfig = FileConfiguration.createDefault();
 
 		this.conNode = new Connection(fconfig);
-
+		this.ftrans = new FileTransfer();
 		
 		
 		File rootFolder = new File(System.getProperty("user.home") + "/Desktop");
@@ -72,9 +74,6 @@ public class CommunicationsInterface extends Application implements ICommunicati
 		
 		// default root folder desktop
 		PERSYSTSession.rootFolder = rootFolder;
-		
-		
-		
 
 		PERSYSTSession.config = new PersystConfiguration(fconfig);
 		//PERSYSTSession.config.rootFolder = PERSYSTSession.rootFolder;
