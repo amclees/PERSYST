@@ -137,7 +137,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 		for (File file : FileUtils.getFiles(PERSYSTSession.rootFolder)) {
 			IProcessComponent<Void> process;
 			try {
-				process = this.conNode.getNode().getFileManager().createDownloadProcess(file);
+				process = this.conNode.getNode().getFileManager().createAddProcess(file);
 				process.execute();
 			} catch (NoPeerConnectionException e) {
 				// TODO Auto-generated catch block
@@ -188,7 +188,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				PERSYSTSession.usr = new UserProfile(username, password, configObj);
 				this.conNode.getNode().getUserManager().createLoginProcess(
 						new UserCredentials(username, password, "Default PIN"),
-						new ConsoleFileAgent(PERSYSTSession.rootFolder));
+						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
 				System.out.println("The post-login root folder is " + PERSYSTSession.rootFolder);
 				this.uploadOwnFiles();
 				return true;
@@ -197,7 +197,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				PERSYSTSession.usr = new UserProfile(username, password, PERSYSTSession.config);
 				this.conNode.getNode().getUserManager().createLoginProcess(
 						new UserCredentials(username, password, "Default PIN"),
-						new ConsoleFileAgent(PERSYSTSession.rootFolder));
+						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
 				System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);
 				this.uploadOwnFiles();
 				return true;
