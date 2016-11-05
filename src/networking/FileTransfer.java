@@ -35,7 +35,7 @@ public class FileTransfer {
 	
 	public void removeComplete(){
 		for(int i = 0; i < this.processes.size(); i++){;
-			if(this.processes.get(i).getProgress() >= 100.0){
+			if(this.processes.get(i).getProgress() == 0.0){
 				this.processes.remove(i);
 				this.files.remove(i);
 				PERSYSTSession.comm.pgui.downView.getList().remove(i);
