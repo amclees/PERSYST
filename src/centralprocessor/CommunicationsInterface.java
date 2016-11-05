@@ -207,9 +207,10 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				this.uploadOwnFiles();
 				
 			}
-			FileObserver fileObserver = new FileObserver(this.getRootFolder(), 5000);
+			FileObserver fileObserver = new FileObserver(PERSYSTSession.rootFolder, 1000);
 			FileObserverListener listener = new FileObserverListener(this.conNode.getNode().getFileManager());
 			fileObserver.addFileObserverListener(listener);
+			fileObserver.start();
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
