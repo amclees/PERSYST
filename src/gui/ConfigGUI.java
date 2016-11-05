@@ -1,25 +1,22 @@
 package gui;
 
-import java.math.BigInteger;
-
-import org.hive2hive.core.H2HConstants;
-
-import centralprocessor.CommunicationsInterface;
-import centralprocessor.PERSYSTSession;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+
+import org.hive2hive.core.H2HConstants;
+
+import centralprocessor.CommunicationsInterface;
+import centralprocessor.PERSYSTSession;
 
 public class ConfigGUI {
 	private Stage pstage;

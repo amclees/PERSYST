@@ -7,6 +7,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Serializable;
 
+import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import networking.Connection;
+import networking.FileTransfer;
+
 import org.hive2hive.core.api.configs.FileConfiguration;
 import org.hive2hive.core.api.configs.NetworkConfiguration;
 import org.hive2hive.core.api.interfaces.IFileConfiguration;
@@ -15,13 +23,11 @@ import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
 import org.hive2hive.core.processes.files.list.FileNode;
 import org.hive2hive.core.security.UserCredentials;
-import org.hive2hive.processframework.exceptions.InvalidProcessStateException;
-import org.hive2hive.processframework.exceptions.ProcessExecutionException;
 import org.hive2hive.processframework.interfaces.IProcessComponent;
 
+import userprofile.UserProfile;
 import configurations.PersystConfiguration;
 import filemanager.ConsoleFileAgent;
-import filemanager.FileEventListener;
 import filemanager.FileObserver;
 import filemanager.FileObserverListener;
 import filemanager.FileUtils;
@@ -31,14 +37,6 @@ import gui.ConnectGUI;
 import gui.LoadScreen;
 import gui.LoginGUI;
 import gui.PersystGUI;
-import javafx.application.Application;
-import javafx.event.EventHandler;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import networking.Connection;
-import networking.FileTransfer;
-import userprofile.UserProfile;
 
 /**
  * Implementation of communications interface

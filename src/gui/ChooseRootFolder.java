@@ -1,14 +1,11 @@
 package gui;
 
-import centralprocessor.CommunicationsInterface;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.filechooser.FileSystemView;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
+import centralprocessor.CommunicationsInterface;
 
 public class ChooseRootFolder {
 

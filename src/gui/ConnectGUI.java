@@ -1,8 +1,5 @@
 package gui;
 
-import centralprocessor.CommunicationsInterface;
-import centralprocessor.PERSYSTSession;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -16,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import centralprocessor.CommunicationsInterface;
 
 public class ConnectGUI {
 	private Stage pstage;
