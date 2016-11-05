@@ -102,11 +102,11 @@ public class UserProfile {
 			this.rootFolder = (File) value;
 		} else if (configuration.equals("maxfilesize")) {
 			try {
-				BigInteger bigint = BigInteger.valueOf(Long.parseLong(value.toString()));
+				BigInteger bigint = BigInteger.valueOf(Long.parseLong((String)value));
 				this.config = new PersystConfiguration(
 						FileConfiguration.createCustom(bigint, H2HConstants.DEFAULT_MAX_NUM_OF_VERSIONS,
 								H2HConstants.DEFAULT_MAX_SIZE_OF_ALL_VERSIONS, H2HConstants.DEFAULT_CHUNK_SIZE));
-				//System.out.println("This config " + config.getFileConfig().getMaxFileSize());
+				
 			} catch (Exception e) {
 				System.out.println("Failed to change max file size due to " + e.getMessage());
 			}

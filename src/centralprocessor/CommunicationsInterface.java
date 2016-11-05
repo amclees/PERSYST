@@ -13,6 +13,7 @@ import org.hive2hive.core.api.interfaces.IFileConfiguration;
 import org.hive2hive.core.api.interfaces.IFileManager;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
+import org.hive2hive.core.processes.files.list.FileNode;
 import org.hive2hive.core.security.UserCredentials;
 import org.hive2hive.processframework.exceptions.InvalidProcessStateException;
 import org.hive2hive.processframework.exceptions.ProcessExecutionException;
@@ -20,6 +21,7 @@ import org.hive2hive.processframework.interfaces.IProcessComponent;
 
 import configurations.PersystConfiguration;
 import filemanager.ConsoleFileAgent;
+import filemanager.FileEventListener;
 import filemanager.FileObserver;
 import filemanager.FileObserverListener;
 import filemanager.FileUtils;
@@ -133,33 +135,6 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	public static void main(String[] args) {
 		launch(args);
 	}
-
-	public void uploadOwnFiles() {
-		for (File file : FileUtils.getFiles(PERSYSTSession.rootFolder)) {
-			IProcessComponent<Void> process;
-			try {
-				process = this.conNode.getNode().getFileManager().createAddProcess(file);
-				process.execute();
-				process = this.conNode.getNode().getFileManager().createDownloadProcess(file);
-				process.execute();
-			} catch (NoPeerConnectionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSessionException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvalidProcessStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ProcessExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-	}
 	
 	@Override
 	/**
@@ -196,7 +171,6 @@ public class CommunicationsInterface extends Application implements ICommunicati
 						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
 				
 				System.out.println("The post-login root folder is " + PERSYSTSession.rootFolder);
-				this.uploadOwnFiles();
 				
 			} else {
 				UserCredentials cred = new UserCredentials(username, password, "Default PIN");
@@ -205,14 +179,38 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				this.conNode.getNode().getUserManager().createLoginProcess(
 						cred,
 						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
-				System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);
-				this.uploadOwnFiles();
-				
+				System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);		
 			}
+			IProcessComponent<FileNode> fileList = this.conNode.getNode().getFileManager().createFileListProcess();
+			FileNode fileNode = fileList.execute();
+			for(FileNode node : FileNode.getNodeList(fileNode, true, true)) {
+				if(node.getFile().exists()) continue;
+				else {
+					IProcessComponent<Void> download = this.conNode.getNode().getFileManager().createDownloadProcess(node.getFile());
+					download.execute();
+				}
+			}
+			
 			FileObserver fileObserver = new FileObserver(PERSYSTSession.rootFolder, 1000);
 			FileObserverListener listener = new FileObserverListener(this.conNode.getNode().getFileManager());
+			
+			for(File localFile : FileUtils.getFiles(this.getRootFolder())) {
+				if(localFile.isDirectory()) {
+					listener.onDirectoryCreate(localFile);
+				} else if (localFile.isFile()){
+					listener.onFileCreate(localFile);
+				}
+			}
+			
+			
+			
+			
 			fileObserver.addFileObserverListener(listener);
+			
 			fileObserver.start();
+			
+		
+			
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
