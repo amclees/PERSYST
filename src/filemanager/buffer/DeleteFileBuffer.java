@@ -44,12 +44,18 @@ public class DeleteFileBuffer extends BaseFileBuffer {
 		Set<File> toRemove = new HashSet<File>();
 		for (File file : bufferedFiles) {
 			boolean found = false;
-			for (FileNode fileTaste : syncFiles) {
-				if (fileTaste.getFile().equals(file)) {
-					found = true;
-					break;
+			try {
+				for (FileNode fileTaste : syncFiles) {
+					try {
+						if (fileTaste.getFile().equals(file)) {
+							found = true;
+							break;
+						}
+					} catch(NullPointerException e) {
+						
+					}
 				}
-			}
+			} catch(NullPointerException e) {}
 
 			if (!found) {
 				// has already been removed, is not in UP anymore
