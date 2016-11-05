@@ -21,6 +21,8 @@ import org.hive2hive.processframework.exceptions.InvalidProcessStateException;
 import org.hive2hive.processframework.exceptions.ProcessExecutionException;
 import org.hive2hive.processframework.interfaces.IProcessComponent;
 
+import centralprocessor.PERSYSTSession;
+
 @Listener(references = References.Strong)
 /**
  * Code sourced from Hive2Hive client on GitHub. 
@@ -50,6 +52,7 @@ public class FileEventListener implements IFileEventListener {
 	 */
 	private void downloadProcessPersystWrapper(File file) throws InvalidProcessStateException, ProcessExecutionException, NoSessionException, NoPeerConnectionException{
 		IProcessComponent<Void> downloadProcess = fileManager.createDownloadProcess(file);
+		PERSYSTSession.comm.ftrans.addProcess(downloadProcess, file.getName());
 		downloadProcess.execute();
 	}
 

@@ -2,10 +2,14 @@ package userprofile;
 
 import java.io.File;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import org.hive2hive.core.H2HConstants;
+import org.hive2hive.core.api.configs.FileConfiguration;
 
 import centralprocessor.PERSYSTSession;
 import configurations.PersystConfiguration;
@@ -42,8 +46,8 @@ public class UserProfile {
 		configMap.put("rootfolder", this.rootFolder);
 		// configMap.put("port", null);
 		configMap.put("maxfilesize", config.getFileConfig().getMaxFileSize());
-		//configMap.put("iplist", this.ipList);
-		this.config.rootFolder = this.rootFolder;
+		// configMap.put("iplist", this.ipList);
+		// this.config.rootFolder = this.rootFolder;
 		PERSYSTSession.rootFolder = this.rootFolder;
 		PERSYSTSession.config = this.config;
 	}
@@ -65,11 +69,11 @@ public class UserProfile {
 		// this.pin = new BigInteger(130, new SecureRandom()).toString(32);
 		this.pin = "Default PIN";
 		this.config = config;
-		PERSYSTSession.rootFolder = config.rootFolder;
-		this.rootFolder = config.rootFolder;
-		//config.rootFolder = PERSYSTSession.rootFolder;
+		// PERSYSTSession.rootFolder = config.rootFolder;
+		this.rootFolder = PERSYSTSession.rootFolder;
+		// config.rootFolder = PERSYSTSession.rootFolder;
 		updateMap();
-		
+
 	}
 
 	/**
@@ -82,7 +86,7 @@ public class UserProfile {
 	public Serializable getConfiguration(String configuration) {
 		return configMap.get(configuration);
 	}
-	
+
 	/**
 	 * This method sets a configuration to the specified value
 	 * 
@@ -93,13 +97,21 @@ public class UserProfile {
 	 */
 	public void setConfiguration(String configuration, Serializable value) {
 		if (configuration.equals("rootfolder")) {
-			this.config.rootFolder = (File) value;
+			// this.config.rootFolder = (File) value;
 			PERSYSTSession.rootFolder = (File) value;
 			this.rootFolder = (File) value;
+		} else if (configuration.equals("maxfilesize")) {
+			try {
+				BigInteger bigint = BigInteger.valueOf(Long.parseLong(value.toString()));
+				this.config = new PersystConfiguration(
+						FileConfiguration.createCustom(bigint, H2HConstants.DEFAULT_MAX_NUM_OF_VERSIONS,
+								H2HConstants.DEFAULT_MAX_SIZE_OF_ALL_VERSIONS, H2HConstants.DEFAULT_CHUNK_SIZE));
+				//System.out.println("This config " + config.getFileConfig().getMaxFileSize());
+			} catch (Exception e) {
+				System.out.println("Failed to change max file size due to " + e.getMessage());
+			}
 		} /*
-			 * else if(configuration.equals("maxfilesize")) {
-			 * 
-			 * } else if(configuration.equals("iplist")) {
+			 * else if (configuration.equals("iplist")) {
 			 * 
 			 * }
 			 */ else {
@@ -138,6 +150,7 @@ public class UserProfile {
 		 * System.arraycopy(config, 0, data, pin.length, config.length); return
 		 * data;
 		 */
+		System.out.println(this.config.getFileConfig().getMaxFileSize());
 		return PersistentStorage.toBytes(this.config);
 
 	}

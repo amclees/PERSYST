@@ -27,6 +27,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -81,7 +82,8 @@ public class PersystGUI {
 		comint.lgui.getStage().setOnHidden(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent we) {
-				System.out.println("login success");
+				System.out.println("GUI Login worked");
+				((Label) infoView.getChildren().get(0)).setText("Username: " + PERSYSTSession.usr.getUsername());;
 			}
 		}); 
 
@@ -130,7 +132,11 @@ public class PersystGUI {
         infoView = new VBox();
         Label username = new Label("Username: ");
         Label conStatus = new Label("Network: Disconnected");
-        infoView.getChildren().addAll(username, conStatus);
+        Button cComplete = new Button("Clear Completed Downloads");
+        cComplete.setOnAction((event) -> {
+			PERSYSTSession.comm.ftrans.removeComplete();
+		});
+        infoView.getChildren().addAll(username, conStatus, cComplete);
         splitPane.getItems().add(infoView);
         
         splitPane.getItems().add(new DownloadView(comint));
@@ -176,6 +182,7 @@ public class PersystGUI {
         MenuItem configMenuItem = new MenuItem("Configurations...");
         options.getItems().add(configMenuItem);
         configMenuItem.setOnAction((event) -> {
+        	if(PERSYSTSession.usr == null) return;
             ConfigGUI dialog = new ConfigGUI(comint);
             dialog.start(new Stage());
             dialog.getStage().initModality(Modality.WINDOW_MODAL);
@@ -268,7 +275,12 @@ public class PersystGUI {
         if (file.isDirectory()) {
             hbox.getChildren().add(folderLarge());
         } else if (file.isFile()) {
-            String ext = file.getPath().substring(file.getPath().lastIndexOf('.'));
+        	String ext;
+        	try {
+        		 ext = file.getPath().substring(file.getPath().lastIndexOf('.'));
+        	} catch(Exception e) {
+        		 ext = ".txt";
+        	}
             if (ext.equalsIgnoreCase(".png") || ext.equalsIgnoreCase(".jpg")
                     || ext.equalsIgnoreCase(".jpeg") || ext.equalsIgnoreCase(".gif")) {
 

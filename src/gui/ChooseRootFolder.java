@@ -41,7 +41,7 @@ public class ChooseRootFolder {
 	    File persystRoot = comint.getRootFolder();
 	    
 	    // Checks if a root has been selected otherwise it defaults to user.home or C:/
-		if(persystRoot != null || persystRoot.isDirectory()){
+		if(persystRoot != null && persystRoot.isDirectory()){
 			userDirectory = persystRoot;
 		}
 		else{

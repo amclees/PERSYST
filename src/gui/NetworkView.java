@@ -146,6 +146,7 @@ public class NetworkView extends VBox {
 	}
 
 	public void refresh(ArrayList<String> ipList){
+		if(ipList == null) return;
 		this.getChildren().remove(2, this.getChildren().size());
 //		this.cButtons.clear();
 		
