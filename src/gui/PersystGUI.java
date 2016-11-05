@@ -6,7 +6,9 @@
 package gui;
 
 import java.awt.Desktop;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -15,37 +17,34 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 
-import javafx.application.Application;
-import javafx.application.Platform;
+import centralprocessor.CommunicationsInterface;
+import centralprocessor.PERSYSTSession;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.TreeCell;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
-import javax.swing.filechooser.FileSystemView;
-
-import centralprocessor.CommunicationsInterface;
-import centralprocessor.PERSYSTSession;
 
 /**
  *
@@ -280,7 +279,7 @@ public class PersystGUI {
         	try {
         		 ext = file.getPath().substring(file.getPath().lastIndexOf('.'));
         	} catch(Exception e) {
-        		 ext = ".txt";
+        		 ext = ".invalid";
         	}
             if (ext.equalsIgnoreCase(".png") || ext.equalsIgnoreCase(".jpg")
                     || ext.equalsIgnoreCase(".jpeg") || ext.equalsIgnoreCase(".gif")) {
@@ -292,12 +291,25 @@ public class PersystGUI {
                         image = new Image("File:\\" + file.getPath(), 800, 0, true, false, true);
                     } else {
                         image = new Image("File:\\" + file.getPath(), 0, 800, true, false, true);
-
+                        
                     }
                 }
                 ImageView imageView = new ImageView(image);
                 hbox.getChildren().add(imageView);
 
+            } else if(ext.equalsIgnoreCase(".txt")) {
+            	Text textNode = new Text("");
+            	try {
+        			BufferedReader rd = new BufferedReader(new FileReader(file));
+        			while(rd.ready()) {
+        				textNode.setText(textNode.getText() + "\n" + rd.readLine());
+        			}
+            	} catch(Exception e) {}
+            	ScrollPane scroll = new ScrollPane();
+            	scroll.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+            	scroll.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+            	scroll.setContent(textNode);
+            	hbox.getChildren().add(scroll);
             } else {
                 hbox.getChildren().add(fileLarge());
             }
