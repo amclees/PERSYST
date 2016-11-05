@@ -186,7 +186,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				else {
 					IProcessComponent<Void> download = this.conNode.getNode().getFileManager().createDownloadProcess(node.getFile());
 					PERSYSTSession.comm.ftrans.addProcess(download, node.getFile().getName());
-					download.execute();
+					download.executeAsync();
 				}
 			}
 			
@@ -208,7 +208,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 			
 			fileObserver.start();
 			
-		
+		    
 			
 			return true;
 		} catch (Exception e) {
