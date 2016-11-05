@@ -1,17 +1,24 @@
 package networking;
 
 import java.util.ArrayList;
+
+import org.hive2hive.processframework.ProcessComponent;
+import org.hive2hive.processframework.composites.SyncProcess;
 import org.hive2hive.processframework.interfaces.IProcessComponent;
 
 public class FileTransfer {
-	ArrayList<IProcessComponent> processes;
+	public ArrayList<IProcessComponent> processes;
+	public ArrayList<String> files;
 	
 	public FileTransfer(){
 		this.processes = new ArrayList<IProcessComponent>();
+		this.files = new ArrayList<String>();
+		
 	}
 	
-	public void addProcess(IProcessComponent nprocess){
+	public void addProcess(IProcessComponent nprocess, String filename){
 		this.processes.add(nprocess);
+		this.files.add(filename);
 	}
 	
 	public ArrayList<Double> getProgress(){
@@ -24,9 +31,16 @@ public class FileTransfer {
 	}
 	
 	public void removeComplete(){
-		for(int i = 0; i < this.processes.size(); i++){
-			if(this.processes.get(i).getProgress() >= 100.0)
+		for(int i = 0; i < this.processes.size(); i++){;
+			if(this.processes.get(i).getProgress() >= 100.0){
 				this.processes.remove(i);
+				this.files.remove(i);
+			}
 		}
+	}
+	
+	public void remove(int index){
+		this.processes.remove(index);
+		this.files.remove(index);
 	}
 }
