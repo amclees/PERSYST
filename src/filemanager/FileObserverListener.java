@@ -39,7 +39,7 @@ public class FileObserverListener implements FileAlterationListener {
 
 	@Override
 	public void onStart(FileAlterationObserver observer) {
-		// logger.debug("File observer for '{}' has been started.", observer.getDirectory().toPath()));
+		 logger.debug("File observer for '{}' has been started.", observer.getDirectory().toPath());
 	}
 
 	@Override

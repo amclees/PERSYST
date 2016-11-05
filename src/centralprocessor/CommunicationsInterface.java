@@ -140,11 +140,13 @@ public class CommunicationsInterface extends Application implements ICommunicati
 			try {
 				process = this.conNode.getNode().getFileManager().createAddProcess(file);
 				process.execute();
+				process = this.conNode.getNode().getFileManager().createDownloadProcess(file);
+				process.execute();
 			} catch (NoPeerConnectionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NoSessionException e) {
-				System.out.println("No Session " + e.toString());
+				e.printStackTrace();
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -207,9 +209,10 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				this.uploadOwnFiles();
 				
 			}
-			FileObserver fileObserver = new FileObserver(this.getRootFolder(), 5000);
+			FileObserver fileObserver = new FileObserver(PERSYSTSession.rootFolder, 1000);
 			FileObserverListener listener = new FileObserverListener(this.conNode.getNode().getFileManager());
 			fileObserver.addFileObserverListener(listener);
+			fileObserver.start();
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

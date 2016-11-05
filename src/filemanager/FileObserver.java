@@ -86,7 +86,7 @@ public class FileObserver {
 			try {
 				listeners.add((FileObserverListener) listener);
 			} catch(ClassCastException e) {
-				logger.debug("Using a FileAlterationListener that in not a FileObserverListener");
+				logger.debug("Using a FileAlterationListener that is not a FileObserverListener");
 			}
 		}
 		return listeners;
