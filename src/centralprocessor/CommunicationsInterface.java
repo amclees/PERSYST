@@ -187,6 +187,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				if(node.getFile().exists()) continue;
 				else {
 					IProcessComponent<Void> download = this.conNode.getNode().getFileManager().createDownloadProcess(node.getFile());
+					PERSYSTSession.comm.ftrans.addProcess(download, file.getName());
 					download.execute();
 				}
 			}
