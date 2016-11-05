@@ -1,22 +1,16 @@
 package gui;
 
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hive2hive.core.api.configs.NetworkConfiguration;
-
-import centralprocessor.CommunicationsInterface;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -30,11 +24,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
-import javafx.scene.Group;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+
+import org.hive2hive.core.api.configs.NetworkConfiguration;
+
+import centralprocessor.CommunicationsInterface;
 
 public class NetworkView extends VBox {
 //	private ObservableList<Button> cButtons;
