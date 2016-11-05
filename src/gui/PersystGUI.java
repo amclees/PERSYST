@@ -17,11 +17,10 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 
-import centralprocessor.CommunicationsInterface;
-import centralprocessor.PERSYSTSession;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -45,6 +44,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
+import centralprocessor.CommunicationsInterface;
+import centralprocessor.PERSYSTSession;
 
 /**
  *
@@ -111,7 +112,7 @@ public class PersystGUI {
 		ArrayList<String> iplist = new ArrayList<>();
         try {
         	iplist.add(InetAddress.getLocalHost().getHostAddress());
- 
+        	//iplist.addAll(comint.conNode.GetLanPeers(comint.netconfig));
         } catch (UnknownHostException e) {}
 
         splitPane.getItems().add(new NetworkView(iplist, comint));
@@ -158,7 +159,7 @@ public class PersystGUI {
         MenuItem ExitMenuItem = new MenuItem("Exit");
         fileMenu.getItems().add(ExitMenuItem);
         ExitMenuItem.setOnAction((event) -> {
-        	this.pstage.close();
+        	this.comint.sendShutdownSignal();
         });     
 
         
@@ -177,6 +178,7 @@ public class PersystGUI {
         refreshMenuItem.setOnAction((event) -> {
             updateGui();
         });     
+        
         
         MenuItem configMenuItem = new MenuItem("Configurations...");
         options.getItems().add(configMenuItem);
@@ -199,7 +201,7 @@ public class PersystGUI {
         
         
         Menu help = new Menu("Help");
-        help.getItems().add(new MenuItem("Sorry"));
+        help.getItems().add(new MenuItem("Sorry No Help"));
 
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(fileMenu, options, help);
@@ -272,6 +274,7 @@ public class PersystGUI {
     public HBox createFileView(File file) {
     	if(file == null) file = new File(System.getProperty("user.home") + "/Desktop");
         HBox hbox = new HBox();
+        hbox.setSpacing(30);
         if (file.isDirectory()) {
             hbox.getChildren().add(folderLarge());
         } else if (file.isFile()) {
@@ -298,7 +301,7 @@ public class PersystGUI {
                 hbox.getChildren().add(imageView);
 
             } else if(ext.equalsIgnoreCase(".txt")) {
-            	Text textNode = new Text("");
+            	Text textNode = new Text("                                       \n");
             	try {
         			BufferedReader rd = new BufferedReader(new FileReader(file));
         			while(rd.ready()) {
@@ -309,7 +312,10 @@ public class PersystGUI {
             	scroll.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
             	scroll.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
             	scroll.setContent(textNode);
+            	
+       
             	hbox.getChildren().add(scroll);
+            	
             } else {
                 hbox.getChildren().add(fileLarge());
             }
@@ -354,12 +360,12 @@ public class PersystGUI {
                     isSymbolicLink,
                     size
             );
-
+            
             hbox.getChildren().add(vbox);
         } catch (IOException e) {
 
         }
-
+        
         return hbox;
     }
    
