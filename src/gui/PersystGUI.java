@@ -183,6 +183,7 @@ public class PersystGUI {
         options.getItems().add(configMenuItem);
         configMenuItem.setOnAction((event) -> {
         	if(PERSYSTSession.usr == null) return;
+        	this.comint.updateConfigurations();
             ConfigGUI dialog = new ConfigGUI(comint);
             dialog.start(new Stage());
             dialog.getStage().initModality(Modality.WINDOW_MODAL);
