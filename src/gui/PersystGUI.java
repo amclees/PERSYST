@@ -58,7 +58,7 @@ public class PersystGUI {
     private CommunicationsInterface comint;
     private File selectedFile;	// selectedFile lets the center view know what file is selected
     public VBox infoView;
-
+    public DownloadView downView;
     private HBox fileView;
     
     //takes in communicationsinterface to call functions later
@@ -138,8 +138,8 @@ public class PersystGUI {
 		});
         infoView.getChildren().addAll(username, conStatus, cComplete);
         splitPane.getItems().add(infoView);
-        
-        splitPane.getItems().add(new DownloadView(comint));
+        downView = new DownloadView(comint);
+        splitPane.getItems().add(downView);
         
         return splitPane;
     }

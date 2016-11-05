@@ -33,7 +33,7 @@ public class DownloadView extends ScrollPane {
 	public DownloadView(CommunicationsInterface comint) {
 		this.comint = comint;
 
-		List = FXCollections.observableArrayList("Item 1", "Item 2", "Item 3", "Item 4", "Item 5");
+		List = FXCollections.observableArrayList();
 		downloadList = new ListView<>(List);
 
 		downloadList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
@@ -59,12 +59,16 @@ public class DownloadView extends ScrollPane {
 //		progresses.add(new Double(0.6));
 //		progresses.add(new Double(0.8));
 		
-		timeline = new Timeline(new KeyFrame(
-		        Duration.millis(1000),
-		        ae -> updateList()));
-		timeline.setCycleCount(Animation.INDEFINITE);
-		timeline.play();
-		updateList();
+//		timeline = new Timeline(new KeyFrame(
+//		        Duration.millis(1000),
+//		        ae -> updateList()));
+//		timeline.setCycleCount(Animation.INDEFINITE);
+//		timeline.play();
+//		updateList();
+	}
+	
+	public ObservableList<String> getList(){
+		return this.List;
 	}
 
 	public void updateList() {
@@ -92,15 +96,22 @@ public class DownloadView extends ScrollPane {
 			Task<Void> task = new Task<Void>() {
 	            @Override 
 	            public Void call() {
-	            	for (double i = 0; i <= 1; i = PERSYSTSession.comm.ftrans.processes.get(index).getProgress()) {
-//	            	for (double i = 0; i <= 1; i = progresses.get(index)) {
+	            	double progress; 
+	            	boolean isfinished = false;
+	            	while(!isfinished){
+	            		progress = PERSYSTSession.comm.ftrans.processes.get(index).getProgress();
 	            		try {
 	            			Thread.sleep(100);
 	            		} catch (InterruptedException e) {
 	            			Thread.interrupted();
 	            			break;
 	            		}
-		            	updateProgress(i, 1);
+//	            		System.out.println(Double.toString(progress));
+	            		if(progress == 0.0){
+	            			progress = 1.0;
+	            			isfinished = true;
+	            		}
+		            	updateProgress(progress, 1);
 	            	}
 	            	return null;
 	            }
