@@ -133,33 +133,6 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	public static void main(String[] args) {
 		launch(args);
 	}
-
-	public void uploadOwnFiles() {
-		for (File file : FileUtils.getFiles(PERSYSTSession.rootFolder)) {
-			IProcessComponent<Void> process;
-			try {
-				process = this.conNode.getNode().getFileManager().createAddProcess(file);
-				process.execute();
-				process = this.conNode.getNode().getFileManager().createDownloadProcess(file);
-				process.execute();
-			} catch (NoPeerConnectionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSessionException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvalidProcessStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ProcessExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-	}
 	
 	@Override
 	/**
@@ -196,7 +169,6 @@ public class CommunicationsInterface extends Application implements ICommunicati
 						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
 				
 				System.out.println("The post-login root folder is " + PERSYSTSession.rootFolder);
-				this.uploadOwnFiles();
 				
 			} else {
 				UserCredentials cred = new UserCredentials(username, password, "Default PIN");
@@ -205,13 +177,23 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				this.conNode.getNode().getUserManager().createLoginProcess(
 						cred,
 						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
-				System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);
-				this.uploadOwnFiles();
-				
+				System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);		
 			}
 			FileObserver fileObserver = new FileObserver(PERSYSTSession.rootFolder, 1000);
 			FileObserverListener listener = new FileObserverListener(this.conNode.getNode().getFileManager());
+			
+			for(File localFile : FileUtils.getFiles(this.getRootFolder())) {
+				if(localFile.isDirectory()) {
+					listener.onDirectoryCreate(localFile);
+				} else if (localFile.isFile()){
+					listener.onFileCreate(localFile);
+				}
+			}
+			
+			
+			
 			fileObserver.addFileObserverListener(listener);
+			
 			fileObserver.start();
 			return true;
 		} catch (Exception e) {
