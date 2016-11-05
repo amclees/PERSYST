@@ -120,12 +120,13 @@ public class ConfigGUI {
 		saveBtn.setOnAction((event) -> {
 			// Save the configs
 //			 Check if the correct arguments are passed
-			if(PERSYSTSession.usr != null){
+			//if(PERSYSTSession.usr != null){
 				PERSYSTSession.usr.setConfiguration("maxfilesize", maxSizeField.getText());
-			}
-			PERSYSTSession.comm.conNode.DisconnectKS();
+			//}
+			PERSYSTSession.comm.conNode.Disconnect();
 			PERSYSTSession.comm.conNode.buildNode(PERSYSTSession.config.getFileConfig());
 			PERSYSTSession.comm.conNode.Connect(PERSYSTSession.comm.netconfig);
+			PERSYSTSession.comm.saveConfigurations();
 			this.pstage.close();
 		});
 		
