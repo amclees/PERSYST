@@ -1,11 +1,6 @@
 package gui;
 
-import java.util.ArrayList;
-import centralprocessor.CommunicationsInterface;
-import centralprocessor.PERSYSTSession;
-import javafx.animation.Animation;
 import javafx.animation.Timeline;
-import javafx.animation.KeyFrame;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -17,7 +12,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.util.Callback;
-import javafx.util.Duration;
+import centralprocessor.CommunicationsInterface;
+import centralprocessor.PERSYSTSession;
 
 public class DownloadView extends ScrollPane {
 
