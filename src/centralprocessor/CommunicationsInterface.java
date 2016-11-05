@@ -14,10 +14,13 @@ import org.hive2hive.core.api.interfaces.IFileManager;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
 import org.hive2hive.core.security.UserCredentials;
+import org.hive2hive.processframework.exceptions.InvalidProcessStateException;
+import org.hive2hive.processframework.exceptions.ProcessExecutionException;
 import org.hive2hive.processframework.interfaces.IProcessComponent;
 
 import configurations.PersystConfiguration;
 import filemanager.ConsoleFileAgent;
+import filemanager.FileUtils;
 import filemanager.PersistentStorage;
 import gui.ConfigGUI;
 import gui.ConnectGUI;
@@ -130,6 +133,31 @@ public class CommunicationsInterface extends Application implements ICommunicati
 		launch(args);
 	}
 
+	public void uploadOwnFiles() {
+		for (File file : FileUtils.getFiles(PERSYSTSession.rootFolder)) {
+			IProcessComponent<Void> process;
+			try {
+				process = this.conNode.getNode().getFileManager().createDownloadProcess(file);
+				process.execute();
+			} catch (NoPeerConnectionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSessionException e) {
+				System.out.println("No Session " + e.toString());
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidProcessStateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ProcessExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
+	
 	@Override
 	/**
 	 * This method initializes the User Profile object for use by other modules
@@ -143,16 +171,26 @@ public class CommunicationsInterface extends Application implements ICommunicati
 				PersistentStorage storage = new PersistentStorage(password, "Default PIN");
 				byte[] config = storage.read(file);
 				PersystConfiguration configObj;
-				if (config.length == 0)
-					configObj = (PersystConfiguration) (PersistentStorage.fromBytes(config));
-				else {
+				if (config.length == 0) {
+					System.out.println("Could not read config data");
 					configObj = PERSYSTSession.config;
+				}
+				else {
+					configObj = (PersystConfiguration) (PersistentStorage.fromBytes(config));
+					if(configObj == null) System.out.println("Failed to read config obj from data");
+					System.out.println("The max file size conf is " + configObj.getFileConfig().getMaxFileSize());
+					conNode.Disconnect();
+					conNode.buildNode(configObj.getFileConfig());
+					//System.out.println(this.netconfig.getNodeID());
+					//NetworkConfiguration nconf = NetworkConfiguration.createInitial();
+					conNode.Connect(this.netconfig);
 				}
 				PERSYSTSession.usr = new UserProfile(username, password, configObj);
 				this.conNode.getNode().getUserManager().createLoginProcess(
 						new UserCredentials(username, password, "Default PIN"),
 						new ConsoleFileAgent(PERSYSTSession.rootFolder));
 				System.out.println("The post-login root folder is " + PERSYSTSession.rootFolder);
+				this.uploadOwnFiles();
 				return true;
 			} else {
 				
@@ -161,6 +199,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 						new UserCredentials(username, password, "Default PIN"),
 						new ConsoleFileAgent(PERSYSTSession.rootFolder));
 				System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);
+				this.uploadOwnFiles();
 				return true;
 			}
 		} catch (Exception e) {
@@ -227,6 +266,7 @@ public class CommunicationsInterface extends Application implements ICommunicati
 	@Override
 	public void setConfiguration(String configuration, Serializable value) {
 		PERSYSTSession.usr.setConfiguration(configuration, value);
+		this.saveConfigurations();
 	}
 
 	@Override

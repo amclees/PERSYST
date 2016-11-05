@@ -1,5 +1,7 @@
 package gui;
 
+import java.math.BigInteger;
+
 import org.hive2hive.core.H2HConstants;
 
 import centralprocessor.CommunicationsInterface;
@@ -93,10 +95,9 @@ public class ConfigGUI {
 		maxSizeField.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				// TODO this block is causing exceptions when a letter is put first
 				if (newValue.matches("\\d*")) {
-					int value = Integer.parseInt(newValue);
-					//PERSYSTSession.comm.setConfiguration("maxfilesize", value);
+					//long value = Long.parseLong(newValue);
+					//PERSYSTSession.comm.setConfiguration("maxfilesize", BigInteger.valueOf(value));
 				} else {
 					maxSizeField.setText(oldValue);
 				}
@@ -122,6 +123,9 @@ public class ConfigGUI {
 			if(PERSYSTSession.usr != null){
 				PERSYSTSession.usr.setConfiguration("maxfilesize", maxSizeField.getText());
 			}
+			PERSYSTSession.comm.conNode.DisconnectKS();
+			PERSYSTSession.comm.conNode.buildNode(PERSYSTSession.config.getFileConfig());
+			PERSYSTSession.comm.conNode.Connect(PERSYSTSession.comm.netconfig);
 			this.pstage.close();
 		});
 		
