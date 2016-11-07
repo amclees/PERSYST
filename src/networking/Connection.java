@@ -126,10 +126,10 @@ public class Connection {
 	// scan lan for reachable connections
 	private ArrayList<String> ScanLAN(Connection cnode) {
 		final int divider = 50;
+		cnode.lanscan.clear();
 		for (int i = 0; i <= divider; i++) {
 			final int start = i * (255 / divider);
 			final int stop = (i + 1) * (255 / divider);
-			cnode.lanscan.clear();
 			scanthreads.add(new Thread() {
 				public void run() {
 					try {
@@ -195,6 +195,7 @@ public class Connection {
 			synchronized (mon) {
 				mon.notify();
 			}
+			scanthreads.clear();
 		}
 	}
 
