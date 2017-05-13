@@ -1,3 +1,6 @@
+# PERSYST-specific files
+root.conf
+
 *.class
 .project
 
