@@ -17,49 +17,49 @@ import org.apache.commons.io.IOUtils;
  *
  */
 public class FileManagerTest {
-	public static void main(String[] args) throws IOException {
-		storageTest();
-		encryptThisDirectory();
-		checksumThisFolder();
-	}
-	
-	private static void checksumThisFolder() {
-		for(File f : FileUtils.getFiles((new File("../PERSYST")))) {
-			System.out.println("File " + f.getName() + " has checksum " + FileUtils.fileChecksum(f));
-		}
-	}
-	
-	private static void encryptThisDirectory() throws IOException {
-		File folder = new File("toEncrypt");
-		folder.mkdir();
-		File[] files = folder.listFiles();
-		PersistentStorage store = new PersistentStorage("pass", "pin1");
-		for(File file : files) {
-			String newPath = file.getAbsolutePath() + ".aes";
-			File encryptedFile = new File(newPath);
-			InputStream in = new BufferedInputStream(new FileInputStream(file));
-			byte[] fileBytes = IOUtils.toByteArray(in);
-			
-			store.store(fileBytes, encryptedFile);
-		}
-	}
-	
-	private static void storageTest() {
-		HashSet<Serializable> toStore = new HashSet<Serializable>();
-		toStore.add("This is a message");
-		for(int i = 0; i < 10; i++) {
-			toStore.add(2 + Math.random() * 20);
-		}
-		toStore.add("This is another message");
-		toStore.add(new byte[4]);
-		
-		PersistentStorage store = new PersistentStorage("pass1", "pin1");
-		File file = new File("stringArray.txt");
-		store.store(toStore, file);
-		HashSet<Serializable> read = (HashSet<Serializable>)PersistentStorage.fromBytes(store.read(file));
-		
-		for(Serializable c : read) {
-			System.out.println(c.toString());
-		}
-	}
+  public static void main(String[] args) throws IOException {
+    storageTest();
+    encryptThisDirectory();
+    checksumThisFolder();
+  }
+
+  private static void checksumThisFolder() {
+    for (File f : FileUtils.getFiles((new File("../PERSYST")))) {
+      System.out.println("File " + f.getName() + " has checksum " + FileUtils.fileChecksum(f));
+    }
+  }
+
+  private static void encryptThisDirectory() throws IOException {
+    File folder = new File("toEncrypt");
+    folder.mkdir();
+    File[] files = folder.listFiles();
+    PersistentStorage store = new PersistentStorage("pass", "pin1");
+    for (File file : files) {
+      String newPath = file.getAbsolutePath() + ".aes";
+      File encryptedFile = new File(newPath);
+      InputStream in = new BufferedInputStream(new FileInputStream(file));
+      byte[] fileBytes = IOUtils.toByteArray(in);
+
+      store.store(fileBytes, encryptedFile);
+    }
+  }
+
+  private static void storageTest() {
+    HashSet<Serializable> toStore = new HashSet<Serializable>();
+    toStore.add("This is a message");
+    for (int i = 0; i < 10; i++) {
+      toStore.add(2 + Math.random() * 20);
+    }
+    toStore.add("This is another message");
+    toStore.add(new byte[4]);
+
+    PersistentStorage store = new PersistentStorage("pass1", "pin1");
+    File file = new File("stringArray.txt");
+    store.store(toStore, file);
+    HashSet<Serializable> read = (HashSet<Serializable>) PersistentStorage.fromBytes(store.read(file));
+
+    for (Serializable c : read) {
+      System.out.println(c.toString());
+    }
+  }
 }

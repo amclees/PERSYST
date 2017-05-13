@@ -45,321 +45,320 @@ import gui.PersystGUI;
  *
  */
 public class CommunicationsInterface extends Application implements ICommunicationsInterface {
-	public PersystGUI pgui;
-	public ConfigGUI cgui;
-	public LoadScreen lscreen;
-	public LoginGUI lgui;
-	// public NetworkViewGUI nvgui;
-	public ConnectGUI congui;
+  public PersystGUI pgui;
+  public ConfigGUI cgui;
+  public LoadScreen lscreen;
+  public LoginGUI lgui;
+  // public NetworkViewGUI nvgui;
+  public ConnectGUI congui;
 
-	public NetworkConfiguration netconfig;
-	public IFileConfiguration fconfig;
-	public Connection conNode;
-	public FileTransfer ftrans;
+  public NetworkConfiguration netconfig;
+  public IFileConfiguration fconfig;
+  public Connection conNode;
+  public FileTransfer ftrans;
 
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		PERSYSTSession.comm = this;
-		// prevent app from closing on all windows exit
-		// Platform.setImplicitExit(false);
-		fconfig = FileConfiguration.createDefault();
+  @Override
+  public void start(Stage primaryStage) throws Exception {
+    PERSYSTSession.comm = this;
+    // prevent app from closing on all windows exit
+    // Platform.setImplicitExit(false);
+    fconfig = FileConfiguration.createDefault();
 
-		this.conNode = new Connection(fconfig);
-		this.ftrans = new FileTransfer();
-		
-		
-		File rootFolder = new File(System.getProperty("user.home") + "\\Documents");
-		
-		try {
-			File initFile = new File("root.conf");
-			BufferedReader rd = new BufferedReader(new FileReader(initFile));
-			String path = rd.readLine();
-			rootFolder = new File(path);
-		} catch(Exception e) {}
-		
-		// default root folder desktop
-		PERSYSTSession.rootFolder = rootFolder;
+    this.conNode = new Connection(fconfig);
+    this.ftrans = new FileTransfer();
 
-		PERSYSTSession.config = new PersystConfiguration(fconfig);
-		//PERSYSTSession.config.rootFolder = PERSYSTSession.rootFolder;
+    File rootFolder = new File(System.getProperty("user.home") + "\\Documents");
 
-		// gui setup
-		this.lgui = new LoginGUI(this);
-		this.lgui.start(new Stage());
+    try {
+      File initFile = new File("root.conf");
+      BufferedReader rd = new BufferedReader(new FileReader(initFile));
+      String path = rd.readLine();
+      rootFolder = new File(path);
+    } catch (Exception e) {
+    }
 
-		this.pgui = new PersystGUI(this);
-		this.pgui.start(primaryStage);
+    // default root folder desktop
+    PERSYSTSession.rootFolder = rootFolder;
 
-		this.pgui.getStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-			@Override
-			public void handle(WindowEvent we) {
-				System.out.println("Disconnecting node");
-				if (conNode.node.isConnected())
-					conNode.node.disconnect();
-				System.out.println("Saving config and shutting down");
-				sendShutdownSignal();
-			}
-		});
+    PERSYSTSession.config = new PersystConfiguration(fconfig);
+    // PERSYSTSession.config.rootFolder = PERSYSTSession.rootFolder;
 
-		this.lgui.getStage().initModality(Modality.WINDOW_MODAL);
-		this.lgui.getStage().initOwner(this.pgui.getStage());
-		// this.cgui = new ConfigGUI(this);
-		// this.cgui.start(new Stage());
-		// this.cgui.getStage().setOnCloseRequest(value);
-		// this.cgui.getStage().setOnCloseRequest(value);
+    // gui setup
+    this.lgui = new LoginGUI(this);
+    this.lgui.start(new Stage());
 
-		// this.congui = new ConnectGUI(this);
-		// this.congui.start(new Stage());
+    this.pgui = new PersystGUI(this);
+    this.pgui.start(primaryStage);
 
-		this.lscreen = new LoadScreen(this);
-		this.lscreen.start(new Stage());
+    this.pgui.getStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+      @Override
+      public void handle(WindowEvent we) {
+        System.out.println("Disconnecting node");
+        if (conNode.node.isConnected())
+          conNode.node.disconnect();
+        System.out.println("Saving config and shutting down");
+        sendShutdownSignal();
+      }
+    });
 
-		// this.nvgui = new NetworkViewGUI(this);
-		// this.nvgui.start(new Stage());
+    this.lgui.getStage().initModality(Modality.WINDOW_MODAL);
+    this.lgui.getStage().initOwner(this.pgui.getStage());
+    // this.cgui = new ConfigGUI(this);
+    // this.cgui.start(new Stage());
+    // this.cgui.getStage().setOnCloseRequest(value);
+    // this.cgui.getStage().setOnCloseRequest(value);
 
-		// locks pgui while nvgui open
-		// this.nvgui.getStage().initModality(Modality.WINDOW_MODAL);
-		// this.nvgui.getStage().initOwner(this.pgui.getStage());
+    // this.congui = new ConnectGUI(this);
+    // this.congui.start(new Stage());
 
-		// show initial display after here
-		// this.cgui.getStage().show();
-		this.pgui.getStage().show();
-		this.pgui.getStage().sizeToScene();
-		// this.nvgui.getStage().show();
-		// this.lscreen.getStage().show();
-		// lscreen.setLabelText("Hang in there!");
-	}
+    this.lscreen = new LoadScreen(this);
+    this.lscreen.start(new Stage());
 
-	public static void main(String[] args) {
-		launch(args);
-	}
-	
-	@Override
-	/**
-	 * This method initializes the User Profile object for use by other modules
-	 * then signals to verify them
-	 */
-	public boolean login(String username, String password) {
-		try {
-			System.out.println("The pre-login root folder is " + PERSYSTSession.rootFolder);
-			File file = new File(PERSYSTSession.rootFolder + "/.persystconf");
-			if (file.exists()) {
-				PersistentStorage storage = new PersistentStorage(password, "Default PIN");
-				byte[] config = storage.read(file);
-				PersystConfiguration configObj;
-				if (config.length == 0) {
-					System.out.println("Could not read config data");
-					configObj = PERSYSTSession.config;
-				}
-				else {
-					configObj = (PersystConfiguration) (PersistentStorage.fromBytes(config));
-					if(configObj == null) System.out.println("Failed to read config obj from data");
-					System.out.println("The max file size conf is " + configObj.getFileConfig().getMaxFileSize());
-					conNode.Disconnect();
-					conNode.buildNode(configObj.getFileConfig());
-					//System.out.println(this.netconfig.getNodeID());
-					//NetworkConfiguration nconf = NetworkConfiguration.createInitial();
-					conNode.Connect(this.netconfig);
-				}
-				PERSYSTSession.usr = new UserProfile(username, password, configObj);
-				UserCredentials cred = new UserCredentials(username, password, "Default PIN");
-				if (!this.conNode.node.getUserManager().isRegistered(cred.getUserId())) this.conNode.getNode().getUserManager().createRegisterProcess(cred).execute();
-				this.conNode.getNode().getUserManager().createLoginProcess(
-						cred,
-						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
-				
-				System.out.println("The post-login root folder is " + PERSYSTSession.rootFolder);
-				
-			} else {
-				UserCredentials cred = new UserCredentials(username, password, "Default PIN");
-				PERSYSTSession.usr = new UserProfile(username, password, PERSYSTSession.config);
-				if (!this.conNode.node.getUserManager().isRegistered(cred.getUserId())) this.conNode.getNode().getUserManager().createRegisterProcess(new UserCredentials(username, password, "Default PIN")).execute();
-				this.conNode.getNode().getUserManager().createLoginProcess(
-						cred,
-						new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
-				System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);		
-			}
-			IProcessComponent<FileNode> fileList = this.conNode.getNode().getFileManager().createFileListProcess();
-			FileNode fileNode = fileList.execute();
-			for(FileNode node : FileNode.getNodeList(fileNode, true, true)) {
-				if(node.getFile().exists()) continue;
-				else {
-					IProcessComponent<Void> download = this.conNode.getNode().getFileManager().createDownloadProcess(node.getFile());
-					PERSYSTSession.comm.ftrans.addProcess(download, node.getFile().getName());
-					download.executeAsync();
-				}
-			}
-			
-			FileObserver fileObserver = new FileObserver(PERSYSTSession.rootFolder, 1000);
-			FileObserverListener listener = new FileObserverListener(this.conNode.getNode().getFileManager());
-			
-			for(File localFile : FileUtils.getFiles(this.getRootFolder())) {
-				if(localFile.isDirectory()) {
-					listener.onDirectoryCreate(localFile);
-				} else if (localFile.isFile()){
-					listener.onFileCreate(localFile);
-				}
-			}
-			
-			
-			
-			
-			fileObserver.addFileObserverListener(listener);
-			
-			fileObserver.start();
-			
-		    
-			
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
+    // this.nvgui = new NetworkViewGUI(this);
+    // this.nvgui.start(new Stage());
 
-	@Override
-	/**
-	 * This method stores the current configurations in the file system
-	 */
-	public void saveConfigurations() {
-		try {
-			File initFile = new File("root.conf");
-			BufferedWriter out = new BufferedWriter(new FileWriter(initFile));
-			out.write(PERSYSTSession.rootFolder.getAbsolutePath());
-			out.close();
-			
-			PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
-			File file = new File(this.getRootFolder().getAbsolutePath() + "/.persystconf");
-			file.delete();
-			file = new File(this.getRootFolder().getAbsolutePath() + "/.persystconf");
-			storage.store(this.getConfigurationsData(), file);
-		} catch(Exception e) {
-			System.out.println("Failed to save config due to " + e.toString());
-			e.printStackTrace();
-		}
-	}
+    // locks pgui while nvgui open
+    // this.nvgui.getStage().initModality(Modality.WINDOW_MODAL);
+    // this.nvgui.getStage().initOwner(this.pgui.getStage());
 
-	@Override
-	/**
-	 * This method updates the current configurations from the file system
-	 */
-	public void updateConfigurations() {
-		try {
-			PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
-			byte[] file = storage.read(new File(this.getRootFolder().getAbsolutePath() + "/.persystconf"));
-			if (file.length == 0)
-				return;
-			PersystConfiguration configObj = (PersystConfiguration) (PersistentStorage.fromBytes(file));
-			PERSYSTSession.usr.setConfigurations(configObj);
-		} catch(NullPointerException e) {
-			//This means the user hasn't logged in
-			return;
-		}
-	}
+    // show initial display after here
+    // this.cgui.getStage().show();
+    this.pgui.getStage().show();
+    this.pgui.getStage().sizeToScene();
+    // this.nvgui.getStage().show();
+    // this.lscreen.getStage().show();
+    // lscreen.setLabelText("Hang in there!");
+  }
 
-	@Override
-	/**
-	 * This method ends the program after saving the configurations
-	 */
-	public void sendShutdownSignal() {
-		this.updateConfigurations();
-		this.saveConfigurations();
-		System.exit(0);
-	}
+  public static void main(String[] args) {
+    launch(args);
+  }
 
-	@Override
-	public Serializable getConfiguration(String configuration) {
-		return PERSYSTSession.usr.getConfiguration(configuration);
-	}
+  @Override
+  /**
+   * This method initializes the User Profile object for use by other modules
+   * then signals to verify them
+   */
+  public boolean login(String username, String password) {
+    try {
+      System.out.println("The pre-login root folder is " + PERSYSTSession.rootFolder);
+      File file = new File(PERSYSTSession.rootFolder + "/.persystconf");
+      if (file.exists()) {
+        PersistentStorage storage = new PersistentStorage(password, "Default PIN");
+        byte[] config = storage.read(file);
+        PersystConfiguration configObj;
+        if (config.length == 0) {
+          System.out.println("Could not read config data");
+          configObj = PERSYSTSession.config;
+        } else {
+          configObj = (PersystConfiguration) (PersistentStorage.fromBytes(config));
+          if (configObj == null)
+            System.out.println("Failed to read config obj from data");
+          System.out.println("The max file size conf is " + configObj.getFileConfig().getMaxFileSize());
+          conNode.Disconnect();
+          conNode.buildNode(configObj.getFileConfig());
+          // System.out.println(this.netconfig.getNodeID());
+          // NetworkConfiguration nconf = NetworkConfiguration.createInitial();
+          conNode.Connect(this.netconfig);
+        }
+        PERSYSTSession.usr = new UserProfile(username, password, configObj);
+        UserCredentials cred = new UserCredentials(username, password, "Default PIN");
+        if (!this.conNode.node.getUserManager().isRegistered(cred.getUserId()))
+          this.conNode.getNode().getUserManager().createRegisterProcess(cred).execute();
+        this.conNode.getNode().getUserManager()
+            .createLoginProcess(cred, new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
 
-	@Override
-	public void setConfiguration(String configuration, Serializable value) {
-		PERSYSTSession.usr.setConfiguration(configuration, value);
-		this.saveConfigurations();
-	}
+        System.out.println("The post-login root folder is " + PERSYSTSession.rootFolder);
 
-	@Override
-	public byte[] getConfigurationsData() {
-		return PERSYSTSession.usr.getConfigData();
-	}
+      } else {
+        UserCredentials cred = new UserCredentials(username, password, "Default PIN");
+        PERSYSTSession.usr = new UserProfile(username, password, PERSYSTSession.config);
+        if (!this.conNode.node.getUserManager().isRegistered(cred.getUserId()))
+          this.conNode.getNode().getUserManager()
+              .createRegisterProcess(new UserCredentials(username, password, "Default PIN")).execute();
+        this.conNode.getNode().getUserManager()
+            .createLoginProcess(cred, new ConsoleFileAgent(PERSYSTSession.rootFolder)).execute();
+        System.out.println("This is the first login. The post-login root folder is " + PERSYSTSession.rootFolder);
+      }
+      IProcessComponent<FileNode> fileList = this.conNode.getNode().getFileManager().createFileListProcess();
+      FileNode fileNode = fileList.execute();
+      for (FileNode node : FileNode.getNodeList(fileNode, true, true)) {
+        if (node.getFile().exists())
+          continue;
+        else {
+          IProcessComponent<Void> download = this.conNode.getNode().getFileManager()
+              .createDownloadProcess(node.getFile());
+          PERSYSTSession.comm.ftrans.addProcess(download, node.getFile().getName());
+          download.executeAsync();
+        }
+      }
 
-	@Override
-	public String getPassword() {
-		return PERSYSTSession.usr.getPassword();
-	}
+      FileObserver fileObserver = new FileObserver(PERSYSTSession.rootFolder, 1000);
+      FileObserverListener listener = new FileObserverListener(this.conNode.getNode().getFileManager());
 
-	@Override
-	public String getUsername() {
-		return PERSYSTSession.usr.getUsername();
-	}
+      for (File localFile : FileUtils.getFiles(this.getRootFolder())) {
+        if (localFile.isDirectory()) {
+          listener.onDirectoryCreate(localFile);
+        } else if (localFile.isFile()) {
+          listener.onFileCreate(localFile);
+        }
+      }
 
-	@Override
-	public String getPIN() {
-		return PERSYSTSession.usr.getPIN();
-	}
+      fileObserver.addFileObserverListener(listener);
 
-	@Override
-	public IProcessComponent<Void> createDownloadProcess(File file) {
-		// Code for this session
-		return null;
-	}
+      fileObserver.start();
 
-	@Override
-	public IProcessComponent<Void> createDownloadProcess(File file, IFileManager filemanager) {
-		try {
-			return filemanager.createDownloadProcess(file);
-		} catch (NoPeerConnectionException e) {
-			e.printStackTrace();
-		} catch (NoSessionException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+      return true;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
 
-	@Override
-	public void storeData(byte[] data, File location) {
-		PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
-		storage.store(data, location);
-	}
+  @Override
+  /**
+   * This method stores the current configurations in the file system
+   */
+  public void saveConfigurations() {
+    try {
+      File initFile = new File("root.conf");
+      BufferedWriter out = new BufferedWriter(new FileWriter(initFile));
+      out.write(PERSYSTSession.rootFolder.getAbsolutePath());
+      out.close();
 
-	@Override
-	public byte[] readData(File location) {
-		PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
-		return storage.read(location);
-	}
+      PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
+      File file = new File(this.getRootFolder().getAbsolutePath() + "/.persystconf");
+      file.delete();
+      file = new File(this.getRootFolder().getAbsolutePath() + "/.persystconf");
+      storage.store(this.getConfigurationsData(), file);
+    } catch (Exception e) {
+      System.out.println("Failed to save config due to " + e.toString());
+      e.printStackTrace();
+    }
+  }
 
-	@Override
-	public Object fromBytes(byte[] data) {
-		return PersistentStorage.fromBytes(data);
-	}
+  @Override
+  /**
+   * This method updates the current configurations from the file system
+   */
+  public void updateConfigurations() {
+    try {
+      PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
+      byte[] file = storage.read(new File(this.getRootFolder().getAbsolutePath() + "/.persystconf"));
+      if (file.length == 0)
+        return;
+      PersystConfiguration configObj = (PersystConfiguration) (PersistentStorage.fromBytes(file));
+      PERSYSTSession.usr.setConfigurations(configObj);
+    } catch (NullPointerException e) {
+      // This means the user hasn't logged in
+      return;
+    }
+  }
 
-	@Override
-	public byte[] toBytes(Serializable object) {
-		return PersistentStorage.toBytes(object);
-	}
+  @Override
+  /**
+   * This method ends the program after saving the configurations
+   */
+  public void sendShutdownSignal() {
+    this.updateConfigurations();
+    this.saveConfigurations();
+    System.exit(0);
+  }
 
-	@Override
-	public boolean setRootFolder(File rootFolder) {
-		System.out.println("Trying to set root folder to " + rootFolder.toString());
-		if(!rootFolder.isDirectory()) return false;
-		try {
-			// this.rootFolder = rootFolder;
-			PERSYSTSession.rootFolder = rootFolder;
-			//PERSYSTSession.config.rootFolder = rootFolder;
-			this.setConfiguration("rootfolder", rootFolder);
-			System.out.println("Set root folder to " + rootFolder.toString());
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
+  @Override
+  public Serializable getConfiguration(String configuration) {
+    return PERSYSTSession.usr.getConfiguration(configuration);
+  }
 
-	@Override
-	public File getRootFolder() {
-		return PERSYSTSession.rootFolder;
-		// return (File) this.getConfiguration("rootfolder");
-	}
+  @Override
+  public void setConfiguration(String configuration, Serializable value) {
+    PERSYSTSession.usr.setConfiguration(configuration, value);
+    this.saveConfigurations();
+  }
+
+  @Override
+  public byte[] getConfigurationsData() {
+    return PERSYSTSession.usr.getConfigData();
+  }
+
+  @Override
+  public String getPassword() {
+    return PERSYSTSession.usr.getPassword();
+  }
+
+  @Override
+  public String getUsername() {
+    return PERSYSTSession.usr.getUsername();
+  }
+
+  @Override
+  public String getPIN() {
+    return PERSYSTSession.usr.getPIN();
+  }
+
+  @Override
+  public IProcessComponent<Void> createDownloadProcess(File file) {
+    // Code for this session
+    return null;
+  }
+
+  @Override
+  public IProcessComponent<Void> createDownloadProcess(File file, IFileManager filemanager) {
+    try {
+      return filemanager.createDownloadProcess(file);
+    } catch (NoPeerConnectionException e) {
+      e.printStackTrace();
+    } catch (NoSessionException e) {
+      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  @Override
+  public void storeData(byte[] data, File location) {
+    PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
+    storage.store(data, location);
+  }
+
+  @Override
+  public byte[] readData(File location) {
+    PersistentStorage storage = new PersistentStorage(this.getPassword(), this.getPIN());
+    return storage.read(location);
+  }
+
+  @Override
+  public Object fromBytes(byte[] data) {
+    return PersistentStorage.fromBytes(data);
+  }
+
+  @Override
+  public byte[] toBytes(Serializable object) {
+    return PersistentStorage.toBytes(object);
+  }
+
+  @Override
+  public boolean setRootFolder(File rootFolder) {
+    System.out.println("Trying to set root folder to " + rootFolder.toString());
+    if (!rootFolder.isDirectory())
+      return false;
+    try {
+      // this.rootFolder = rootFolder;
+      PERSYSTSession.rootFolder = rootFolder;
+      // PERSYSTSession.config.rootFolder = rootFolder;
+      this.setConfiguration("rootfolder", rootFolder);
+      System.out.println("Set root folder to " + rootFolder.toString());
+      return true;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
+
+  @Override
+  public File getRootFolder() {
+    return PERSYSTSession.rootFolder;
+    // return (File) this.getConfiguration("rootfolder");
+  }
 }

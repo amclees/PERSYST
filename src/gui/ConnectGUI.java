@@ -16,73 +16,74 @@ import javafx.stage.Stage;
 import centralprocessor.CommunicationsInterface;
 
 public class ConnectGUI {
-	private Stage pstage;
-	
-	private CommunicationsInterface comint;
+  private Stage pstage;
 
-    //takes in communicationsinterface to call functions later
-    public ConnectGUI(CommunicationsInterface comint){
-    	this.comint = comint;
-    }
-//	@Override
-    public void start(Stage primaryStage) {
-        this.pstage = primaryStage;
-        this.pstage.setTitle("Connect");
-        VBox root = new VBox(20);
-        populateRoot(root, this.pstage);
+  private CommunicationsInterface comint;
 
-        Scene scene = new Scene(root, 600, 250);
-        this.pstage.setScene(scene);
-    }
-	
-    public Stage getStage(){
-    	return this.pstage;
-    }
-    
-    private void populateRoot(VBox root, Stage stage){
-    	
-//    	root.set
-    	
-    	root.setAlignment(Pos.CENTER);
-    	
-    	Text title = new Text("PERSYST Login");
-    	title.setFont(new Font(32));
-    	
-    	HBox userHbox = new HBox();
-    	userHbox.setAlignment(Pos.CENTER);
-    	
-    	Text userText = new Text("username:\t\t");
-    	userText.setFont(new Font(20));
-    	
-    	TextField userField = new TextField();
-    	userHbox.getChildren().addAll(userText, userField);
-    	userField.setPromptText("Your username");
-    	
-    	HBox passHbox = new HBox();
-    	passHbox.setAlignment(Pos.CENTER);
-    	
-    	Text passText = new Text("password:\t\t");
-    	passText.setFont(new Font(20));
-    	    	
-    	PasswordField passField = new PasswordField();
-    	passField.setPromptText("Your password");
-    	passHbox.getChildren().addAll(passText, passField);
-    	
+  // takes in communicationsinterface to call functions later
+  public ConnectGUI(CommunicationsInterface comint) {
+    this.comint = comint;
+  }
 
-    	root.setAlignment(Pos.CENTER);
-    	Text passHint = new Text("");
-    	passHint.setFont(new Font(20));
-    	passHint.setFill(Color.RED);
-    	
-    	root.setAlignment(Pos.CENTER);
+  // @Override
+  public void start(Stage primaryStage) {
+    this.pstage = primaryStage;
+    this.pstage.setTitle("Connect");
+    VBox root = new VBox(20);
+    populateRoot(root, this.pstage);
 
-    	Button loginBtn = new Button("Login");
-    	loginBtn.setOnAction(new EventHandler<ActionEvent>() {
-    	    @Override public void handle(ActionEvent e) {
+    Scene scene = new Scene(root, 600, 250);
+    this.pstage.setScene(scene);
+  }
 
-    	    }
-    	});
-    	
-    	root.getChildren().addAll(title, userHbox, passHbox, passHint, loginBtn);
-    }
+  public Stage getStage() {
+    return this.pstage;
+  }
+
+  private void populateRoot(VBox root, Stage stage) {
+
+    // root.set
+
+    root.setAlignment(Pos.CENTER);
+
+    Text title = new Text("PERSYST Login");
+    title.setFont(new Font(32));
+
+    HBox userHbox = new HBox();
+    userHbox.setAlignment(Pos.CENTER);
+
+    Text userText = new Text("username:\t\t");
+    userText.setFont(new Font(20));
+
+    TextField userField = new TextField();
+    userHbox.getChildren().addAll(userText, userField);
+    userField.setPromptText("Your username");
+
+    HBox passHbox = new HBox();
+    passHbox.setAlignment(Pos.CENTER);
+
+    Text passText = new Text("password:\t\t");
+    passText.setFont(new Font(20));
+
+    PasswordField passField = new PasswordField();
+    passField.setPromptText("Your password");
+    passHbox.getChildren().addAll(passText, passField);
+
+    root.setAlignment(Pos.CENTER);
+    Text passHint = new Text("");
+    passHint.setFont(new Font(20));
+    passHint.setFill(Color.RED);
+
+    root.setAlignment(Pos.CENTER);
+
+    Button loginBtn = new Button("Login");
+    loginBtn.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent e) {
+
+      }
+    });
+
+    root.getChildren().addAll(title, userHbox, passHbox, passHint, loginBtn);
+  }
 }

@@ -8,30 +8,31 @@ import org.hive2hive.core.file.IFileAgent;
 
 /**
  * Taken from H2H client
+ * 
  * @author H2H team
  */
 public class ConsoleFileAgent implements IFileAgent {
 
-	private final File root;
-	private final File cache;
+  private final File root;
+  private final File cache;
 
-	public ConsoleFileAgent(File root) {
-		this.root = root;
-		this.cache = new File(FileUtils.getTempDirectory(), "H2H-Cache");
-	}
+  public ConsoleFileAgent(File root) {
+    this.root = root;
+    this.cache = new File(FileUtils.getTempDirectory(), "H2H-Cache");
+  }
 
-	@Override
-	public File getRoot() {
-		return root;
-	}
+  @Override
+  public File getRoot() {
+    return root;
+  }
 
-	@Override
-	public void writeCache(String key, byte[] data) throws IOException {
-		FileUtils.writeByteArrayToFile(new File(cache, key), data);
-	}
+  @Override
+  public void writeCache(String key, byte[] data) throws IOException {
+    FileUtils.writeByteArrayToFile(new File(cache, key), data);
+  }
 
-	@Override
-	public byte[] readCache(String key) throws IOException {
-		return FileUtils.readFileToByteArray(new File(cache, key));
-	}
+  @Override
+  public byte[] readCache(String key) throws IOException {
+    return FileUtils.readFileToByteArray(new File(cache, key));
+  }
 }

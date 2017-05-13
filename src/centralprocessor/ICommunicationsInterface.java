@@ -1,4 +1,5 @@
 package centralprocessor;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,95 +18,93 @@ import org.hive2hive.processframework.interfaces.IProcessComponent;
  * TODO Write a concrete implementation TODO Write a static register for this
  */
 public interface ICommunicationsInterface {
-	
-	public boolean login(String username, String password);
-	
-	public void saveConfigurations();
 
-	public void updateConfigurations();
+  public boolean login(String username, String password);
 
-	public void sendShutdownSignal();
+  public void saveConfigurations();
 
-	public Serializable getConfiguration(String configuration);
+  public void updateConfigurations();
 
-	public void setConfiguration(String configuration, Serializable value);
+  public void sendShutdownSignal();
 
-	public byte[] getConfigurationsData();
+  public Serializable getConfiguration(String configuration);
 
-	public String getPassword();
+  public void setConfiguration(String configuration, Serializable value);
 
-	public String getUsername();
+  public byte[] getConfigurationsData();
 
-	public String getPIN();
+  public String getPassword();
 
-	/**
-	 * This method is needed if we want to wrap download processes. It needs the
-	 * IFileManager (H2H) if this interface does not have a field for it. If we
-	 * use this, we need to modify the wrapper in FileEventListener
-	 */
-	public IProcessComponent<Void> createDownloadProcess(File file);
+  public String getUsername();
 
-	public IProcessComponent<Void> createDownloadProcess(File file,
-			IFileManager filemanager);
+  public String getPIN();
 
-	/**
-	 * This method sends data to the File Manaager to be encrypted and stored
-	 *
-	 * @param data
-	 *            Data to be stored
-	 * @param location
-	 *            Location to store the data
-	 */
-	public void storeData(byte[] data, File location);
+  /**
+   * This method is needed if we want to wrap download processes. It needs the
+   * IFileManager (H2H) if this interface does not have a field for it. If we
+   * use this, we need to modify the wrapper in FileEventListener
+   */
+  public IProcessComponent<Void> createDownloadProcess(File file);
 
-	/**
-	 * This method sends a file path to the File Manager to be decrypted and
-	 * read
-	 *
-	 * @param location
-	 *            Location to read
-	 * @return Data read, or empty if the file is not stored using
-	 *         PersistentStorage
-	 */
-	public byte[] readData(File location);
+  public IProcessComponent<Void> createDownloadProcess(File file, IFileManager filemanager);
 
-	/**
-	 * These method reads an object from a byte array.
-	 *
-	 * @param data
-	 *            The byte array containing the object
-	 * @return The object from the data. Null if the data is not a valid object.
-	 */
-	public Object fromBytes(byte[] data);
+  /**
+   * This method sends data to the File Manaager to be encrypted and stored
+   *
+   * @param data
+   *          Data to be stored
+   * @param location
+   *          Location to store the data
+   */
+  public void storeData(byte[] data, File location);
 
-	/**
-	 * These method creates a byte array from an object.
-	 *
-	 * @param object
-	 *            A serializable object to be converted to bytes
-	 * @return The byte array corresponding to the object
-	 */
-	public byte[] toBytes(Serializable object);
+  /**
+   * This method sends a file path to the File Manager to be decrypted and read
+   *
+   * @param location
+   *          Location to read
+   * @return Data read, or empty if the file is not stored using
+   *         PersistentStorage
+   */
+  public byte[] readData(File location);
 
-	/*
-	 * 
-	 * GUI SECTION
-	 */
+  /**
+   * These method reads an object from a byte array.
+   *
+   * @param data
+   *          The byte array containing the object
+   * @return The object from the data. Null if the data is not a valid object.
+   */
+  public Object fromBytes(byte[] data);
 
-	/**
-	 * These method creates and sets the root folder.
-	 *
-	 * @param File
-	 *            with with the path of the root folder
-	 * @return true if the File is a directory or the directory was created
-	 */
-	public boolean setRootFolder(File rootFolder);
+  /**
+   * These method creates a byte array from an object.
+   *
+   * @param object
+   *          A serializable object to be converted to bytes
+   * @return The byte array corresponding to the object
+   */
+  public byte[] toBytes(Serializable object);
 
-	/**
-	 * These method returns the root folder as a File.
-	 *
-	 * @return the root folder as a File
-	 */
-	public File getRootFolder();
+  /*
+   * 
+   * GUI SECTION
+   */
+
+  /**
+   * These method creates and sets the root folder.
+   *
+   * @param File
+   *          with with the path of the root folder
+   * @return true if the File is a directory or the directory was created
+   */
+  public boolean setRootFolder(File rootFolder);
+
+  /**
+   * These method returns the root folder as a File.
+   *
+   * @return the root folder as a File
+   */
+  public File getRootFolder();
 
 }
