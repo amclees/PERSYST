@@ -1,5 +1,0 @@
-package networking;
-
-class Update {
-
-}
